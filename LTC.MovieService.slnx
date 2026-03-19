@@ -1,0 +1,35 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LTC.MovieService.Application.Contracts/LTC.MovieService.Application.Contracts.csproj" />
+    <Project Path="src/LTC.MovieService.Application/LTC.MovieService.Application.csproj" />
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <Project Path="src/LTC.MovieService.DbMigrator/LTC.MovieService.DbMigrator.csproj" />
+    <Project Path="src/LTC.MovieService.Domain.Shared/LTC.MovieService.Domain.Shared.csproj" />
+    <Project Path="src/LTC.MovieService.Domain/LTC.MovieService.Domain.csproj" />
+    <Project Path="src/LTC.MovieService.EntityFrameworkCore/LTC.MovieService.EntityFrameworkCore.csproj" />
+    <Project Path="src/LTC.MovieService.HttpApi.Client/LTC.MovieService.HttpApi.Client.csproj" />
+    
+    <Project Path="src/LTC.MovieService.HttpApi.Host/LTC.MovieService.HttpApi.Host.csproj" />
+    <Project Path="src/LTC.MovieService.HttpApi/LTC.MovieService.HttpApi.csproj" />
+    
+    
+    
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/LTC.MovieService.Application.Tests/LTC.MovieService.Application.Tests.csproj" />
+    <Project Path="test/LTC.MovieService.Domain.Tests/LTC.MovieService.Domain.Tests.csproj" />
+    <Project Path="test/LTC.MovieService.EntityFrameworkCore.Tests/LTC.MovieService.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="test/LTC.MovieService.HttpApi.Client.ConsoleTestApp/LTC.MovieService.HttpApi.Client.ConsoleTestApp.csproj" />
+    
+    <Project Path="test/LTC.MovieService.TestBase/LTC.MovieService.TestBase.csproj" />
+    
+  </Folder>
+</Solution>
