@@ -255,8 +255,7 @@ paket-files/
 src/LTC.MovieService.Web/Logs/*
 src/LTC.MovieService.Web.Host/Logs/*
 src/LTC.MovieService.AuthServer/Logs/*
-src/LTC.MovieService.HttpApi.Host/Logs/*
-src/LTC.MovieService.HttpApi.Host/Logs/*
+LTC.MovieService.HttpApi.Host/Logs/*
 src/LTC.MovieService.DbMigrator/Logs/*
 src/LTC.MovieService.Blazor.Server/Logs/*
 src/LTC.MovieService.Blazor.Server.Tiered/Logs/*

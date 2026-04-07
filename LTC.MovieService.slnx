@@ -17,7 +17,7 @@
     <Project Path="src/LTC.MovieService.EntityFrameworkCore/LTC.MovieService.EntityFrameworkCore.csproj" />
     <Project Path="src/LTC.MovieService.HttpApi.Client/LTC.MovieService.HttpApi.Client.csproj" />
     
-    <Project Path="src/LTC.MovieService.HttpApi.Host/LTC.MovieService.HttpApi.Host.csproj" />
+    <Project Path="LTC.MovieService.HttpApi.Host/LTC.MovieService.HttpApi.Host.csproj" />
     <Project Path="src/LTC.MovieService.HttpApi/LTC.MovieService.HttpApi.csproj" />
     
     

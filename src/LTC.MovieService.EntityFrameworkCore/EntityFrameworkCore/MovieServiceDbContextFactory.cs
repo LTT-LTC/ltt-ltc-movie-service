@@ -25,7 +25,7 @@ public class MovieServiceDbContextFactory : IDesignTimeDbContextFactory<MovieSer
     private static IConfigurationRoot BuildConfiguration()
     {
         var builder = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../LTC.MovieService.DbMigrator/"))
+            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../LTC.MovieService.HttpApi.Host/"))
             .AddJsonFile("appsettings.json", optional: false);
 
         return builder.Build();

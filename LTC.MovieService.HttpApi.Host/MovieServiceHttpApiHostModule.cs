@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using LTC.MovieService.EntityFrameworkCore;
 using LTC.MovieService.MultiTenancy;
+using LTC.Shared.Hosting.Microservices;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Microsoft.OpenApi;
@@ -41,7 +42,8 @@ namespace LTC.MovieService;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule)
+    typeof(AbpSwashbuckleModule),
+    typeof(LTCSharedHostingMicroservicesModule)
 )]
 public class MovieServiceHttpApiHostModule : AbpModule
 {
@@ -117,16 +119,16 @@ public class MovieServiceHttpApiHostModule : AbpModule
             {
                 options.FileSets.ReplaceEmbeddedByPhysical<MovieServiceDomainSharedModule>(
                     Path.Combine(hostingEnvironment.ContentRootPath,
-                        $"..{Path.DirectorySeparatorChar}LTC.MovieService.Domain.Shared"));
+                        string.Format("..{0}src{0}LTC.MovieService.Domain.Shared", Path.DirectorySeparatorChar)));
                 options.FileSets.ReplaceEmbeddedByPhysical<MovieServiceDomainModule>(
                     Path.Combine(hostingEnvironment.ContentRootPath,
-                        $"..{Path.DirectorySeparatorChar}LTC.MovieService.Domain"));
+                        string.Format("..{0}src{0}LTC.MovieService.Domain", Path.DirectorySeparatorChar)));
                 options.FileSets.ReplaceEmbeddedByPhysical<MovieServiceApplicationContractsModule>(
                     Path.Combine(hostingEnvironment.ContentRootPath,
-                        $"..{Path.DirectorySeparatorChar}LTC.MovieService.Application.Contracts"));
+                        string.Format("..{0}src{0}LTC.MovieService.Application.Contracts", Path.DirectorySeparatorChar)));
                 options.FileSets.ReplaceEmbeddedByPhysical<MovieServiceApplicationModule>(
                     Path.Combine(hostingEnvironment.ContentRootPath,
-                        $"..{Path.DirectorySeparatorChar}LTC.MovieService.Application"));
+                        string.Format("..{0}src{0}LTC.MovieService.Application", Path.DirectorySeparatorChar)));
             });
         }
     }
@@ -192,6 +194,7 @@ public class MovieServiceHttpApiHostModule : AbpModule
             app.UseErrorPage();
         }
 
+        app.UsePathBase("/ltc/movie-service");
         app.UseCorrelationId();
         app.MapAbpStaticAssets();
         app.UseRouting();
@@ -210,7 +213,7 @@ public class MovieServiceHttpApiHostModule : AbpModule
         app.UseSwagger();
         app.UseAbpSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "MovieService API");
+            c.SwaggerEndpoint("/ltc/movie-service/swagger/v1/swagger.json", "MovieService API");
 
             var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
             c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);

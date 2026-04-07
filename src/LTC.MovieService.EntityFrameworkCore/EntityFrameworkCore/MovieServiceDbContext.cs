@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+using LTC.MovieService.Entities;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -23,20 +25,7 @@ public class MovieServiceDbContext :
     IIdentityDbContext,
     ITenantManagementDbContext
 {
-    /* Add DbSet properties for your Aggregate Roots / Entities here. */
-
     #region Entities from the modules
-
-    /* Notice: We only implemented IIdentityDbContext and ITenantManagementDbContext
-     * and replaced them for this DbContext. This allows you to perform JOIN
-     * queries for the entities of these modules over the repositories easily. You
-     * typically don't need that for other modules. But, if you need, you can
-     * implement the DbContext interface of the needed module and use ReplaceDbContext
-     * attribute just like IIdentityDbContext and ITenantManagementDbContext.
-     *
-     * More info: Replacing a DbContext of a module ensures that the related module
-     * uses this DbContext on runtime. Otherwise, it will use its own DbContext class.
-     */
 
     //Identity
     public DbSet<IdentityUser> Users { get; set; }
@@ -53,6 +42,23 @@ public class MovieServiceDbContext :
 
     #endregion
 
+    #region Movie Entities
+
+    public DbSet<Movie> Movies { get; set; }
+    public DbSet<Studio> Studios { get; set; }
+    public DbSet<Rating> Ratings { get; set; }
+    public DbSet<Genre> Genres { get; set; }
+    public DbSet<MovieGenre> MovieGenres { get; set; }
+    public DbSet<Actor> Actors { get; set; }
+    public DbSet<MovieActor> MovieActors { get; set; }
+    public DbSet<MovieRole> MovieRoles { get; set; }
+    public DbSet<MovieActorRole> MovieActorRoles { get; set; }
+    public DbSet<MovieFormat> MovieFormats { get; set; }
+    public DbSet<Format> Formats { get; set; }
+    public DbSet<MovieDistribution> MovieDistributions { get; set; }
+
+    #endregion
+
     public MovieServiceDbContext(DbContextOptions<MovieServiceDbContext> options)
         : base(options)
     {
@@ -62,6 +68,7 @@ public class MovieServiceDbContext :
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.HasDefaultSchema(MovieServiceConsts.DbSchema);
 
         /* Include modules to your migration db context */
 
@@ -74,13 +81,79 @@ public class MovieServiceDbContext :
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
 
-        /* Configure your own tables/entities inside here */
+        /* Configure Movie entities */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(MovieServiceConsts.DbTablePrefix + "YourEntities", MovieServiceConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        builder.Entity<Movie>(b =>
+        {
+            b.ToTable("Movies", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Studio>(b =>
+        {
+            b.ToTable("Studios", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Rating>(b =>
+        {
+            b.ToTable("Ratings", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Genre>(b =>
+        {
+            b.ToTable("Genres", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<MovieGenre>(b =>
+        {
+            b.ToTable("MovieGenres", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Actor>(b =>
+        {
+            b.ToTable("Actors", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<MovieActor>(b =>
+        {
+            b.ToTable("MovieActors", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<MovieRole>(b =>
+        {
+            b.ToTable("MovieRoles", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<MovieActorRole>(b =>
+        {
+            b.ToTable("MovieActorRoles", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<MovieFormat>(b =>
+        {
+            b.ToTable("MovieFormats", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Format>(b =>
+        {
+            b.ToTable("Formats", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<MovieDistribution>(b =>
+        {
+            b.ToTable("MovieDistributions", MovieServiceConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
     }
 }
+
