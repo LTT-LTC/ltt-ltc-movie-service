@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: dranov220805/ltt-ltc-movie-service
-      SERVICE_NAME: ltt-ltc-movie-service
+      IMAGE_NAME: dranov220805/ltt-ltc-movie-api
+      SERVICE_NAME: ltt-ltc-movie-api
 
     steps:
       - name: Checkout code
@@ -50,7 +50,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no dranov@100.109.240.84 << 'EOF'
             cd /home/dranov/Desktop/ltt-ltc
 
-            docker compose pull ltt-ltc-movie-service
-            docker compose up -d --no-deps ltt-ltc-movie-service
+            docker compose pull ltt-ltc-movie-api
+            docker compose up -d --no-deps ltt-ltc-movie-api
           EOF
+
 
