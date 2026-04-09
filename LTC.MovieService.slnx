@@ -16,8 +16,6 @@
     <Project Path="src/LTC.MovieService.Domain/LTC.MovieService.Domain.csproj" />
     <Project Path="src/LTC.MovieService.EntityFrameworkCore/LTC.MovieService.EntityFrameworkCore.csproj" />
     <Project Path="src/LTC.MovieService.HttpApi.Client/LTC.MovieService.HttpApi.Client.csproj" />
-    
-    <Project Path="LTC.MovieService.HttpApi.Host/LTC.MovieService.HttpApi.Host.csproj" />
     <Project Path="src/LTC.MovieService.HttpApi/LTC.MovieService.HttpApi.csproj" />
     
     
@@ -32,4 +30,5 @@
     <Project Path="test/LTC.MovieService.TestBase/LTC.MovieService.TestBase.csproj" />
     
   </Folder>
+  <Project Path="LTC.MovieService.HttpApi.Host/LTC.MovieService.HttpApi.Host.csproj" />
 </Solution>
