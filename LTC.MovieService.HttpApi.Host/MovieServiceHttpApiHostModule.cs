@@ -50,6 +50,8 @@ public class MovieServiceHttpApiHostModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
+        context.Services.AddGrpc();
+
         Configure<AbpDbContextOptions>(options =>
         {
             options.UseSqlServer();
@@ -200,6 +202,9 @@ public class MovieServiceHttpApiHostModule : AbpModule
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        app.UseConfiguredEndpoints();
+        app.UseConfiguredEndpoints(endpoints =>
+        {
+            endpoints.MapGrpcService<LTC.MovieService.Grpc.MovieGrpcService>();
+        });
     }
 }

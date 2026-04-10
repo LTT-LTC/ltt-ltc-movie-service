@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "LTC.MovieService.Grpc";
+
+package movie;
+
+service MovieGrpc {
+  rpc GetPaginatedMovies (GetPaginatedMoviesRequest) returns (GetPaginatedMoviesResponse);
+}
+
+message GetPaginatedMoviesRequest {
+  int32 skipCount = 1;
+  int32 maxResultCount = 2;
+  string sorting = 3;
+  string filter = 4;
+}
+
+message MovieMessage {
+  string id = 1;
+  string studioId = 2;
+  string ratingId = 3;
+  string title = 4;
+  string originalTitle = 5;
+  int32 durationMins = 6;
+  string releaseDate = 7;
+  string premiereDate = 8;
+  string status = 9;
+  string description = 10;
+  string posterUrl = 11;
+  string trailerUrl = 12;
+  string createdAt = 13;
+  string updatedAt = 14;
+}
+
+message GetPaginatedMoviesResponse {
+  int64 totalCount = 1;
+  repeated MovieMessage items = 2;
+}

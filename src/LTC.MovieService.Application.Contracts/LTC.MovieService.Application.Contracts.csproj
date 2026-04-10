@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\LTC.Shared.CrossCuttingConcerns\LTC.Shared.CrossCuttingConcerns.csproj" />
     <ProjectReference Include="..\LTC.MovieService.Domain.Shared\LTC.MovieService.Domain.Shared.csproj" />
   </ItemGroup>
 

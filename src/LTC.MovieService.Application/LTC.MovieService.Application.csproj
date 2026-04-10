@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\LTC.Shared.CrossCuttingConcerns\LTC.Shared.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\..\shared\LTC.Shared.Hosting.Microservices\LTC.Shared.Hosting.Microservices.csproj" />
     <ProjectReference Include="..\LTC.MovieService.Domain\LTC.MovieService.Domain.csproj" />
     <ProjectReference Include="..\LTC.MovieService.Application.Contracts\LTC.MovieService.Application.Contracts.csproj" />
   </ItemGroup>
