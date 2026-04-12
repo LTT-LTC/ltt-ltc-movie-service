@@ -85,7 +85,7 @@ public class MovieServiceDbContext : AbpDbContext<MovieServiceDbContext>
 
         builder.Entity<MovieRole>(b =>
         {
-            b.ToTable("MovieRoles", MovieServiceConsts.DbSchema);
+            b.ToTable("Roles", MovieServiceConsts.DbSchema);
             b.ConfigureByConvention();
         });
 
@@ -99,12 +99,15 @@ public class MovieServiceDbContext : AbpDbContext<MovieServiceDbContext>
         {
             b.ToTable("MovieFormats", MovieServiceConsts.DbSchema);
             b.ConfigureByConvention();
+            b.HasOne<Movie>().WithMany().HasForeignKey(x => x.MovieId);
+            b.HasOne<Format>().WithMany().HasForeignKey(x => x.FormatId);
         });
 
         builder.Entity<Format>(b =>
         {
             b.ToTable("Formats", MovieServiceConsts.DbSchema);
             b.ConfigureByConvention();
+            b.Property(x => x.Name).IsRequired();
         });
 
         builder.Entity<MovieDistribution>(b =>

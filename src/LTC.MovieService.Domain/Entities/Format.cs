@@ -5,7 +5,6 @@ namespace LTC.MovieService.Entities
 {
     public class Format : Entity<Guid>
     {
-        public Guid MovieId { get; set; }
-        public Guid MovieFormatId { get; set; }
+        public string Name { get; set; }
     }
 }
