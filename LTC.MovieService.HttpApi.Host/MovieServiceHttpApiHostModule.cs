@@ -87,7 +87,7 @@ public class MovieServiceHttpApiHostModule : AbpModule
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo {Title = "LTC Movie Service API Endpoint", Version = "v1"});
-                options.DocInclusionPredicate((docName, description) => true);
+                options.DocInclusionPredicate((docName, description) => description.RelativePath != null && description.RelativePath.StartsWith("ltc/movie-service", StringComparison.OrdinalIgnoreCase));
                 options.CustomSchemaIds(type => type.FullName);
             });
 
