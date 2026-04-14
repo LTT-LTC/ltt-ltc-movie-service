@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LTC.MovieService.Dto;
+using LTC.MovieService.Dtos.Input;
+using LTC.MovieService.Dtos.Output;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 
 namespace LTC.MovieService.Controllers;
 
 [Area(MovieServiceRemoteServiceConsts.ModuleName)]
 [RemoteService(Name = MovieServiceRemoteServiceConsts.RemoteServiceName)]
-[Route($"{MovieServiceSettingNames.DefaultRoute}")]
+[Route(MovieServiceSettingNames.DefaultRoute)]
 public class MovieController : MovieServiceController, IMovieAppService
 {
     private readonly IMovieAppService _movieAppService;
@@ -20,14 +22,32 @@ public class MovieController : MovieServiceController, IMovieAppService
     }
 
     [HttpGet("movie-all")]
-    public virtual Task<List<MovieOutputDto>> GetAllAsync()
+    public virtual Task<PagedResultDto<MovieOutputDto>> GetAllAsync([FromQuery] GetMovieListInputDto input)
     {
-        return _movieAppService.GetAllAsync();
+        return _movieAppService.GetAllAsync(input);
     }
 
     [HttpGet("movie/{id}")]
-    public virtual Task<MovieOutputDto> GetAsync(Guid id)
+    public virtual Task<MovieDetailOutputDto> GetAsync(Guid id)
     {
         return _movieAppService.GetAsync(id);
+    }
+
+    [HttpPost("movie")]
+    public virtual Task<MovieOutputDto> CreateAsync(CreateMovieInputDto input)
+    {
+        return _movieAppService.CreateAsync(input);
+    }
+
+    [HttpPut("movie/{id}")]
+    public virtual Task<MovieOutputDto> UpdateAsync(Guid id, UpdateMovieInputDto input)
+    {
+        return _movieAppService.UpdateAsync(id, input);
+    }
+
+    [HttpDelete("movie/{id}")]
+    public virtual Task DeleteAsync(Guid id)
+    {
+        return _movieAppService.DeleteAsync(id);
     }
 }

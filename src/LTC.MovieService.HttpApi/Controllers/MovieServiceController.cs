@@ -1,4 +1,4 @@
-﻿using LTC.MovieService.Localization;
+using LTC.MovieService.Localization;
 using Volo.Abp.AspNetCore.Mvc;
 
 namespace LTC.MovieService.Controllers;
