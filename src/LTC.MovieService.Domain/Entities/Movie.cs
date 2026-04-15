@@ -5,6 +5,7 @@ namespace LTC.MovieService.Entities
 {
     public class Movie : Entity<Guid>
     {
+
         public Guid? StudioId { get; set; }
         public Guid? RatingId { get; set; }
         public string Title { get; set; }
