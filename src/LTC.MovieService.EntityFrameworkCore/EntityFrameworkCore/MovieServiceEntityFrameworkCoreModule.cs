@@ -1,6 +1,6 @@
-using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Uow;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.SqlServer;
 using Volo.Abp.Modularity;
@@ -9,7 +9,8 @@ namespace LTC.MovieService.EntityFrameworkCore;
 
 [DependsOn(
     typeof(MovieServiceDomainModule),
-    typeof(AbpEntityFrameworkCoreSqlServerModule)
+    typeof(AbpEntityFrameworkCoreSqlServerModule),
+    typeof(Volo.Abp.TenantManagement.EntityFrameworkCore.AbpTenantManagementEntityFrameworkCoreModule)
     )]
 public class MovieServiceEntityFrameworkCoreModule : AbpModule
 {
@@ -26,6 +27,10 @@ public class MovieServiceEntityFrameworkCoreModule : AbpModule
                  * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
         });
+
+        // Required for schema-per-tenant isolation: EF Core must cache a separate compiled
+        // model for each schema name, otherwise all requests share the first cached model.
+        context.Services.Replace(ServiceDescriptor.Singleton<IModelCacheKeyFactory, TenantModelCacheKeyFactory>());
 
         Configure<AbpDbContextOptions>(options =>
         {

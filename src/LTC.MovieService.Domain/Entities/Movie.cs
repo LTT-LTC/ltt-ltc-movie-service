@@ -1,10 +1,12 @@
 using System;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.MultiTenancy;
 
 namespace LTC.MovieService.Entities
 {
-    public class Movie : Entity<Guid>
+    public class Movie : Entity<Guid>, IMultiTenant
     {
+        public Guid? TenantId { get; set; }
 
         public Guid? StudioId { get; set; }
         public Guid? RatingId { get; set; }

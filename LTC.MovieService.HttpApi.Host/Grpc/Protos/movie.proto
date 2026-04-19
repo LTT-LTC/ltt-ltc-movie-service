@@ -6,6 +6,17 @@ package movie;
 
 service MovieGrpc {
   rpc GetPaginatedMovies (GetPaginatedMoviesRequest) returns (GetPaginatedMoviesResponse);
+  rpc GetMovieById (GetMovieByIdRequest) returns (MovieMessage);
+  rpc GetAllGenres (Empty) returns (GenresResponse);
+  rpc GetAllFormats (Empty) returns (FormatsResponse);
+  rpc GetAllActors (Empty) returns (ActorsResponse);
+  rpc GetAllStudios (Empty) returns (StudiosResponse);
+}
+
+message Empty {}
+
+message GetMovieByIdRequest {
+  string id = 1;
 }
 
 message GetPaginatedMoviesRequest {
@@ -35,4 +46,41 @@ message MovieMessage {
 message GetPaginatedMoviesResponse {
   int64 totalCount = 1;
   repeated MovieMessage items = 2;
+}
+
+message GenreMessage {
+  string id = 1;
+  string name = 2;
+}
+
+message GenresResponse {
+  repeated GenreMessage items = 1;
+}
+
+message FormatMessage {
+  string id = 1;
+  string name = 2;
+}
+
+message FormatsResponse {
+  repeated FormatMessage items = 1;
+}
+
+message ActorMessage {
+  string id = 1;
+  string name = 2;
+  string bio = 3;
+}
+
+message ActorsResponse {
+  repeated ActorMessage items = 1;
+}
+
+message StudioMessage {
+  string id = 1;
+  string name = 2;
+}
+
+message StudiosResponse {
+  repeated StudioMessage items = 1;
 }
