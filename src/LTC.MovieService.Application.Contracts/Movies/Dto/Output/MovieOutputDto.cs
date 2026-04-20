@@ -1,6 +1,7 @@
 using LTC.MovieService.Actors.Dtos.Output;
 using LTC.MovieService.Genres.Dtos.Output;
 using LTC.MovieService.Roles.Dtos.Output;
+using LTC.MovieService.Ratings.Dtos.Output;
 using LTC.MovieService.Studios.Dtos.Output;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,10 @@ namespace LTC.MovieService.Dtos.Output
         public Guid MovieId { get; set; }
 
         public Guid? StudioId { get; set; }
+        public string? StudioName { get; set; }
         public Guid? RatingId { get; set; }
+        public string? RatingCode { get; set; }
+        public string? RatingName { get; set; }
         public string Title { get; set; }
         public string? OriginalTitle { get; set; }
         public int? DurationMins { get; set; }
@@ -27,7 +31,9 @@ namespace LTC.MovieService.Dtos.Output
         public DateTime? UpdatedAt { get; set; }
 
         public StudioOutputDto? Studio { get; set; }
+        public List<string> GenreNames { get; set; } = new();
         public List<GenreOutputDto> Genres { get; set; } = new();
+        public List<MovieCastNameOutputDto> ActorRoles { get; set; } = new();
         public List<MovieCastOutputDto> Cast { get; set; } = new();
     }
 
@@ -40,5 +46,13 @@ namespace LTC.MovieService.Dtos.Output
         public ActorOutputDto Actor { get; set; }
         public RoleOutputDto? Role { get; set; }
         public string? CharacterName { get; set; }
+        public string? ActorName { get; set; }
+        public string? RoleName { get; set; }
+    }
+
+    public class MovieCastNameOutputDto
+    {
+        public string ActorName { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
     }
 }
