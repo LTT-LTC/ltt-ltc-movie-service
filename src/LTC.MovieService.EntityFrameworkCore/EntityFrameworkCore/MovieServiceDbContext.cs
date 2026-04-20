@@ -1,7 +1,7 @@
 using LTC.MovieService.Entities;
+using LTC.MovieService.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Data;
-using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 
@@ -27,77 +27,85 @@ public class MovieServiceDbContext : AbpDbContext<MovieServiceDbContext>
 
     #endregion
 
-    public MovieServiceDbContext(DbContextOptions<MovieServiceDbContext> options)
+    private readonly ITenantSchemaResolver? _tenantSchemaResolver;
+
+    public MovieServiceDbContext(
+        DbContextOptions<MovieServiceDbContext> options,
+        ITenantSchemaResolver? tenantSchemaResolver = null)
         : base(options)
     {
-
+        _tenantSchemaResolver = tenantSchemaResolver;
     }
+
+    public string GetCurrentSchema() => _tenantSchemaResolver?.GetSchemaName() ?? "dbo";
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.HasDefaultSchema(MovieServiceConsts.DbSchema);
+        
+        var schema = GetCurrentSchema();
+        builder.HasDefaultSchema(schema);
 
 
         /* Configure Movie entities */
 
         builder.Entity<Movie>(b =>
         {
-            b.ToTable("Movies", MovieServiceConsts.DbSchema);
+            b.ToTable("Movies");
             b.ConfigureByConvention();
         });
 
         builder.Entity<Studio>(b =>
         {
-            b.ToTable("Studios", MovieServiceConsts.DbSchema);
+            b.ToTable("Studios");
             b.ConfigureByConvention();
         });
 
         builder.Entity<Rating>(b =>
         {
-            b.ToTable("Ratings", MovieServiceConsts.DbSchema);
+            b.ToTable("Ratings");
             b.ConfigureByConvention();
         });
 
         builder.Entity<Genre>(b =>
         {
-            b.ToTable("Genres", MovieServiceConsts.DbSchema);
+            b.ToTable("Genres");
             b.ConfigureByConvention();
         });
 
         builder.Entity<MovieGenre>(b =>
         {
-            b.ToTable("MovieGenres", MovieServiceConsts.DbSchema);
+            b.ToTable("MovieGenres");
             b.ConfigureByConvention();
         });
 
         builder.Entity<Actor>(b =>
         {
-            b.ToTable("Actors", MovieServiceConsts.DbSchema);
+            b.ToTable("Actors");
             b.ConfigureByConvention();
         });
 
         builder.Entity<MovieActor>(b =>
         {
-            b.ToTable("MovieActors", MovieServiceConsts.DbSchema);
+            b.ToTable("MovieActors");
             b.ConfigureByConvention();
         });
 
         builder.Entity<MovieRole>(b =>
         {
-            b.ToTable("Roles", MovieServiceConsts.DbSchema);
+            b.ToTable("Roles");
             b.ConfigureByConvention();
         });
 
         builder.Entity<MovieActorRole>(b =>
         {
-            b.ToTable("MovieActorRoles", MovieServiceConsts.DbSchema);
+            b.ToTable("MovieActorRoles");
             b.ConfigureByConvention();
         });
 
         builder.Entity<MovieFormat>(b =>
         {
-            b.ToTable("MovieFormats", MovieServiceConsts.DbSchema);
+            b.ToTable("MovieFormats");
             b.ConfigureByConvention();
             b.HasOne<Movie>().WithMany().HasForeignKey(x => x.MovieId);
             b.HasOne<Format>().WithMany().HasForeignKey(x => x.FormatId);
@@ -105,14 +113,14 @@ public class MovieServiceDbContext : AbpDbContext<MovieServiceDbContext>
 
         builder.Entity<Format>(b =>
         {
-            b.ToTable("Formats", MovieServiceConsts.DbSchema);
+            b.ToTable("Formats");
             b.ConfigureByConvention();
             b.Property(x => x.Name).IsRequired();
         });
 
         builder.Entity<MovieDistribution>(b =>
         {
-            b.ToTable("MovieDistributions", MovieServiceConsts.DbSchema);
+            b.ToTable("MovieDistributions");
             b.ConfigureByConvention();
         });
     }

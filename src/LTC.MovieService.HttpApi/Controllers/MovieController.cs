@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LTC.MovieService.Dtos.Input;
 using LTC.MovieService.Dtos.Output;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -34,18 +35,21 @@ public class MovieController : MovieServiceController, IMovieAppService
     }
 
     [HttpPost("movie")]
+    [Authorize(Roles = "Admin,Manager")]
     public virtual Task<MovieOutputDto> CreateAsync(CreateMovieInputDto input)
     {
         return _movieAppService.CreateAsync(input);
     }
 
     [HttpPut("movie/{id}")]
+    [Authorize(Roles = "Admin,Manager")]
     public virtual Task<MovieOutputDto> UpdateAsync(Guid id, UpdateMovieInputDto input)
     {
         return _movieAppService.UpdateAsync(id, input);
     }
 
     [HttpDelete("movie/{id}")]
+    [Authorize(Roles = "Admin,Manager")]
     public virtual Task DeleteAsync(Guid id)
     {
         return _movieAppService.DeleteAsync(id);

@@ -8,12 +8,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LTC.MovieService.EntityFrameworkCore;
 using LTC.MovieService.MultiTenancy;
 using LTC.Shared.Hosting.Microservices;
+using LTC.Shared.Hosting.Microservices.Authentication;
+using LTC.Shared.Hosting.Microservices.MultiTenancy;
 using LTC.Shared.Hosting.Microservices.OpenApi.Swagger;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
@@ -47,6 +48,7 @@ public class MovieServiceHttpApiHostModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        Configure<Volo.Abp.Security.Claims.AbpClaimsPrincipalFactoryOptions>(options => { options.IsDynamicClaimsEnabled = false; });
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
@@ -78,50 +80,35 @@ public class MovieServiceHttpApiHostModule : AbpModule
             });
         }
 
-        context.Services.AddAbpSwaggerGenWithOAuth(
-            configuration["AuthServer:Authority"]!,
-            new Dictionary<string, string>
-            {
-                {"MovieService", "LTC Movie Service API Endpoint"}
-            },
-            options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo {Title = "LTC Movie Service API Endpoint", Version = "v1"});
-                options.DocInclusionPredicate((docName, description) => description.RelativePath != null && description.RelativePath.StartsWith("ltc/movie-service", StringComparison.OrdinalIgnoreCase));
-                options.CustomSchemaIds(type => type.FullName);
-            });
+        context.ConfigureSwaggerServices("LTC Movie Service API Endpoint", "v1");
 
         Configure<AbpLocalizationOptions>(options =>
         {
-            options.Languages.Add(new LanguageInfo("ar", "ar", "العربية"));
-            options.Languages.Add(new LanguageInfo("cs", "cs", "Čeština"));
+            options.Languages.Add(new LanguageInfo("ar", "ar", "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©"));
+            options.Languages.Add(new LanguageInfo("cs", "cs", "ÄŒeÅ¡tina"));
             options.Languages.Add(new LanguageInfo("en", "en", "English"));
             options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
             options.Languages.Add(new LanguageInfo("fi", "fi", "Finnish"));
-            options.Languages.Add(new LanguageInfo("fr", "fr", "Français"));
+            options.Languages.Add(new LanguageInfo("fr", "fr", "FranÃ§ais"));
             options.Languages.Add(new LanguageInfo("hi", "hi", "Hindi"));
             options.Languages.Add(new LanguageInfo("is", "is", "Icelandic"));
             options.Languages.Add(new LanguageInfo("it", "it", "Italiano"));
             options.Languages.Add(new LanguageInfo("hu", "hu", "Magyar"));
-            options.Languages.Add(new LanguageInfo("pt-BR", "pt-BR", "Português"));
-            options.Languages.Add(new LanguageInfo("ro-RO", "ro-RO", "Română"));
-            options.Languages.Add(new LanguageInfo("ru", "ru", "Русский"));
+            options.Languages.Add(new LanguageInfo("pt-BR", "pt-BR", "PortuguÃªs"));
+            options.Languages.Add(new LanguageInfo("ro-RO", "ro-RO", "RomÃ¢nÄƒ"));
+            options.Languages.Add(new LanguageInfo("ru", "ru", "Ð ÑƒÑÑÐºÐ¸Ð¹"));
             options.Languages.Add(new LanguageInfo("sk", "sk", "Slovak"));
-            options.Languages.Add(new LanguageInfo("tr", "tr", "Türkçe"));
-            options.Languages.Add(new LanguageInfo("zh-Hans", "zh-Hans", "简体中文"));
-            options.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "繁體中文"));
+            options.Languages.Add(new LanguageInfo("tr", "tr", "TÃ¼rkÃ§e"));
+            options.Languages.Add(new LanguageInfo("zh-Hans", "zh-Hans", "ç®€ä½“ä¸­æ–‡"));
+            options.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "ç¹é«”ä¸­æ–‡"));
             options.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch"));
-            options.Languages.Add(new LanguageInfo("es", "es", "Español"));
-            options.Languages.Add(new LanguageInfo("el", "el", "Ελληνικά"));
+            options.Languages.Add(new LanguageInfo("es", "es", "EspaÃ±ol"));
+            options.Languages.Add(new LanguageInfo("el", "el", "Î•Î»Î»Î·Î½Î¹ÎºÎ¬"));
         });
 
-        context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddAbpJwtBearer(options =>
-            {
-                options.Authority = configuration["AuthServer:Authority"];
-                options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
-                options.Audience = "MovieService";
-            });
+
+
+        context.ConfigureAuthenticationJwtBearer();
 
         Configure<AbpDistributedCacheOptions>(options =>
         {
@@ -158,6 +145,12 @@ public class MovieServiceHttpApiHostModule : AbpModule
                     .AllowCredentials();
             });
         });
+
+        context.Services.AddControllers(options =>
+        {
+            options.Filters.Add(typeof(LTC.Shared.Hosting.Microservices.ApplicationExceptionFilterAttribute));
+            options.Filters.Add(typeof(TenantValidationFilter));
+        });
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
@@ -190,16 +183,7 @@ public class MovieServiceHttpApiHostModule : AbpModule
         app.UseAbpRequestLocalization();
         app.UseAuthorization();
         string swaggerRoutePrefix = "ltc/movie-service/swagger";
-        app.UseSwaggerUI("LTC Movie Service", swaggerRoutePrefix);
-        app.UseSwagger();
-        app.UseAbpSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/ltc/movie-service/swagger/v1/swagger.json", "LTC Movie Service API Endpoint");
-
-            var configuration = context.GetConfiguration();
-            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-            options.OAuthScopes("MovieService");
-        });
+        app.UseConfiguredSwagger("LTC Movie Service", swaggerRoutePrefix);
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints(endpoints =>
@@ -208,3 +192,11 @@ public class MovieServiceHttpApiHostModule : AbpModule
         });
     }
 }
+
+
+
+
+
+
+
+
