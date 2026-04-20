@@ -13,9 +13,9 @@ namespace LTC.MovieService.Formats
 {
     public class FormatAppService : MovieServiceAppService, IFormatAppService
     {
-        private readonly IRepository<FormatEntity, Guid> _repository;
+        private readonly IRepository<Format, Guid> _repository;
 
-        public FormatAppService(IRepository<FormatEntity, Guid> repository)
+        public FormatAppService(IRepository<Format, Guid> repository)
         {
             _repository = repository;
         }
@@ -48,7 +48,7 @@ namespace LTC.MovieService.Formats
         public async Task<FormatOutputDto> CreateAsync(CreateFormatInputDto input)
         {
             // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new FormatEntity() { Name = input.Name };
+            var entity = new Format() { Name = input.Name };
             await _repository.InsertAsync(entity);
             return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
         }

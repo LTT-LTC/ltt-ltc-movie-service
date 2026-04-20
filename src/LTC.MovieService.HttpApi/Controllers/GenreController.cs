@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
-using LTC.MovieService.Genre;
+using LTC.MovieService.Genres;
 using LTC.MovieService.Genres.Dtos.Input;
 using LTC.MovieService.Genres.Dtos.Output;
 

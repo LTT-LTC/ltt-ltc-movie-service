@@ -343,7 +343,7 @@ namespace LTC.MovieService.Movies
 
             foreach (var movieActor in movieActors)
             {
-                var actor = actorLookup.TryGetValue(movieActor.ActorId, out var actor)
+                var actorOutput = actorLookup.TryGetValue(movieActor.ActorId, out var actor)
                     ? MapActor(actor)
                     : new ActorOutputDto { Id = movieActor.ActorId, Name = string.Empty };
 
@@ -351,7 +351,7 @@ namespace LTC.MovieService.Movies
                 {
                     cast.Add(new MovieCastOutputDto
                     {
-                        Actor = actor,
+                        Actor = actorOutput,
                         Role = null,
                         CharacterName = null,
                     });
@@ -360,7 +360,7 @@ namespace LTC.MovieService.Movies
 
                 cast.AddRange(movieActorRoles.Select(movieActorRole => new MovieCastOutputDto
                 {
-                    Actor = actor,
+                    Actor = actorOutput,
                     Role = roleLookup.TryGetValue(movieActorRole.RoleId, out var roleEntity)
                         ? MapRole(roleEntity)
                         : new RoleOutputDto { Id = movieActorRole.RoleId, Name = string.Empty },
