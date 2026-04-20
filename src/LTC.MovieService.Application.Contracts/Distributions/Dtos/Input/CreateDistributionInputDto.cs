@@ -4,7 +4,11 @@ using System.Text;
 
 namespace LTC.MovieService.Distributions.Dtos.Input
 {
-    internal class CreateDistributionInputDto
+    public class CreateDistributionInputDto
     {
+        public Guid MovieId { get; set; }
+        public DateTime? LicenseStartDate { get; set; }
+        public DateTime? LicenseEndDate { get; set; }
+        public bool IsExclusive { get; set; }
     }
 }
