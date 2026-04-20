@@ -1,3 +1,5 @@
 using System;
-namespace LTC.MovieService.Studio.Dtos.Output;
-public class StudioDetailOutputDto : StudioOutputDto { }
+namespace LTC.MovieService.Studios.Dtos.Output;
+public class StudioDetailOutputDto : StudioOutputDto 
+{ 
+}

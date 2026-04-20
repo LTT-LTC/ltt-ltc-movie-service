@@ -1,3 +1,3 @@
 using System;
-namespace LTC.MovieService.Role.Dtos.Output;
+namespace LTC.MovieService.Roles.Dtos.Output;
 public class RoleDetailOutputDto : RoleOutputDto { }

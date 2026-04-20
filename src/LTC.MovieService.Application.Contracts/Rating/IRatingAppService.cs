@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Application.Dtos;
-using LTC.MovieService.Rating.Dtos.Input;
-using LTC.MovieService.Rating.Dtos.Output;
+using LTC.MovieService.Ratings.Dtos.Input;
+using LTC.MovieService.Ratings.Dtos.Output;
 
-namespace LTC.MovieService.Rating
+namespace LTC.MovieService.Ratings
 {
     public interface IRatingAppService : IApplicationService
     {

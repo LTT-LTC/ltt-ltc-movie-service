@@ -4,6 +4,7 @@ using LTC.MovieService.Dtos.Output;
 using LTC.MovieService.Distributions.Dtos.Input;
 using LTC.MovieService.Distributions.Dtos.Output;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Application.Dtos;
 
 namespace LTC.MovieService.Distributions
 {

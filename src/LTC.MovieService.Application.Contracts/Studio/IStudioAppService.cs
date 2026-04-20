@@ -2,9 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Application.Dtos;
-using LTC.MovieService.Studio.Dtos.Input;
-using LTC.MovieService.Studio.Dtos.Output;
-namespace LTC.MovieService.Studio;
+using LTC.MovieService.Studios.Dtos.Input;
+using LTC.MovieService.Studios.Dtos.Output;
+
+namespace LTC.MovieService.Studios;
 public interface IStudioAppService : IApplicationService
 {
 Task<PagedResultDto<StudioOutputDto>> GetAllAsync(GetStudioListInputDto input);

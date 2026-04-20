@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LTC.MovieService.Distributions;
+using LTC.MovieService.Distributions.Dtos.Input;
+using LTC.MovieService.Distributions.Dtos.Output;
 using LTC.MovieService.Entities;
+using LTC.MovieService.Movies;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
-namespace LTC.MovieService
+namespace LTC.MovieService.Distributions
 {
     public class DistributionAppService(
         IRepository<MovieDistribution, Guid> distributionRepository,

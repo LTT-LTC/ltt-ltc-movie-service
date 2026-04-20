@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using LTC.MovieService.Admin;
+using LTC.MovieService.Distributions;
+using LTC.MovieService.Distributions.Dtos.Input;
+using LTC.MovieService.Distributions.Dtos.Output;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;

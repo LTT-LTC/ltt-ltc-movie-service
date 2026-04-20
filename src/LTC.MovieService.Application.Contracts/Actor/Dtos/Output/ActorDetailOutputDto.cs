@@ -1,3 +1,5 @@
 using System;
-namespace LTC.MovieService.Actor.Dtos.Output;
-public class ActorDetailOutputDto : ActorOutputDto { }
+namespace LTC.MovieService.Actors.Dtos.Output;
+public class ActorDetailOutputDto : ActorOutputDto 
+{ 
+}

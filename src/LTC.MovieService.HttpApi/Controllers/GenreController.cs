@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
 using LTC.MovieService.Genre;
-using LTC.MovieService.Genre.Dtos.Input;
-using LTC.MovieService.Genre.Dtos.Output;
+using LTC.MovieService.Genres.Dtos.Input;
+using LTC.MovieService.Genres.Dtos.Output;
 
 namespace LTC.MovieService.Controllers;
 

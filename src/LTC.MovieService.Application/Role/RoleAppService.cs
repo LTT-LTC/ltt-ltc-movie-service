@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LTC.MovieService.Entities;
-using LTC.MovieService.Role;
-using LTC.MovieService.Role.Dtos.Input;
-using LTC.MovieService.Role.Dtos.Output;
+using LTC.MovieService.Roles;
+using LTC.MovieService.Roles.Dtos.Input;
+using LTC.MovieService.Roles.Dtos.Output;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
-namespace LTC.MovieService
+namespace LTC.MovieService.Roles
 {
     public class RoleAppService : MovieServiceAppService, IRoleAppService
     {

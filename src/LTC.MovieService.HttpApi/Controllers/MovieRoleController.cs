@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
-using LTC.MovieService.Role;
-using LTC.MovieService.Role.Dtos.Input;
-using LTC.MovieService.Role.Dtos.Output;
+using LTC.MovieService.Roles;
+using LTC.MovieService.Roles.Dtos.Input;
+using LTC.MovieService.Roles.Dtos.Output;
 
 namespace LTC.MovieService.Controllers
 {

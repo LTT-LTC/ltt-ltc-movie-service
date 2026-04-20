@@ -1,2 +1,4 @@
-namespace LTC.MovieService.Actor.Dtos.Input;
-public class CreateActorInputDto { public string Name { get; set; } }
+namespace LTC.MovieService.Actors.Dtos.Input;
+public class CreateActorInputDto { 
+    public string Name { get; set; } 
+}

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LTC.MovieService.Entities;
-using LTC.MovieService.Rating;
-using LTC.MovieService.Rating.Dtos.Input;
-using LTC.MovieService.Rating.Dtos.Output;
+using LTC.MovieService.Ratings;
+using LTC.MovieService.Ratings.Dtos.Input;
+using LTC.MovieService.Ratings.Dtos.Output;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
-namespace LTC.MovieService
+namespace LTC.MovieService.Ratings
 {
     public class RatingAppService : MovieServiceAppService, IRatingAppService
     {

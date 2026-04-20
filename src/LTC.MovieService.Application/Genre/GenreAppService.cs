@@ -5,22 +5,23 @@ using System.Linq;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using LTC.MovieService.Entities;
-using LTC.MovieService.Format;
-using LTC.MovieService.Format.Dtos.Input;
-using LTC.MovieService.Format.Dtos.Output;
+using LTC.MovieService.Genres;
+using LTC.MovieService.Genres.Dtos.Input;
+using LTC.MovieService.Genres.Dtos.Output;
+using GenreEntity = LTC.MovieService.Entities.Genre;
 
-namespace LTC.MovieService
+namespace LTC.MovieService.Genres
 {
-    public class FormatAppService : MovieServiceAppService, IFormatAppService
+    public class GenreAppService : MovieServiceAppService, IGenreAppService
     {
-        private readonly IRepository<Format, Guid> _repository;
+        private readonly IRepository<Genre, Guid> _repository;
 
-        public FormatAppService(IRepository<Format, Guid> repository)
+        public GenreAppService(IRepository<Genre, Guid> repository)
         {
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<FormatOutputDto>> GetAllAsync(GetFormatListInputDto input)
+        public async Task<PagedResultDto<GenreOutputDto>> GetAllAsync(GetGenreListInputDto input)
         {
             // TODO: Ensure mapping works or mapping configured in AutoMapper profile
             var query = await _repository.GetQueryableAsync();
@@ -35,30 +36,30 @@ namespace LTC.MovieService
             );
 
             // Dummy manual map to pass compile. Consider AutoMapper.
-            var items = entities.Select(e => new FormatOutputDto { Id = e.Id, Name = e.Name }).ToList();
-            return new PagedResultDto<FormatOutputDto>(totalCount, items);
+            var items = entities.Select(e => new GenreOutputDto { Id = e.Id, Name = e.Name }).ToList();
+            return new PagedResultDto<GenreOutputDto>(totalCount, items);
         }
 
-        public async Task<FormatDetailOutputDto> GetAsync(Guid id)
+        public async Task<GenreDetailOutputDto> GetAsync(Guid id)
         {
             var entity = await _repository.GetAsync(id);
-            return new FormatDetailOutputDto { Id = entity.Id, Name = entity.Name };
+            return new GenreDetailOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<FormatOutputDto> CreateAsync(CreateFormatInputDto input)
+        public async Task<GenreOutputDto> CreateAsync(CreateGenreInputDto input)
         {
             // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new Format() { Name = input.Name };
+            var entity = new Genre() { Name = input.Name };
             await _repository.InsertAsync(entity);
-            return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
+            return new GenreOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<FormatOutputDto> UpdateAsync(Guid id, UpdateFormatInputDto input)
+        public async Task<GenreOutputDto> UpdateAsync(Guid id, UpdateGenreInputDto input)
         {
             var entity = await _repository.GetAsync(id);
             entity.Name = input.Name;
             await _repository.UpdateAsync(entity);
-            return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
+            return new GenreOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
         public async Task DeleteAsync(Guid id)

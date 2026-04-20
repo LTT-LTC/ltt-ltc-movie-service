@@ -2,9 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Application.Dtos;
-using LTC.MovieService.Actor.Dtos.Input;
-using LTC.MovieService.Actor.Dtos.Output;
-namespace LTC.MovieService.Actor;
+using LTC.MovieService.Actors.Dtos.Input;
+using LTC.MovieService.Actors.Dtos.Output;
+
+namespace LTC.MovieService.Actors;
 public interface IActorAppService : IApplicationService
 {
 Task<PagedResultDto<ActorOutputDto>> GetAllAsync(GetActorListInputDto input);

@@ -5,22 +5,22 @@ using System.Linq;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using LTC.MovieService.Entities;
-using LTC.MovieService.Studio;
-using LTC.MovieService.Studio.Dtos.Input;
-using LTC.MovieService.Studio.Dtos.Output;
+using LTC.MovieService.Actors;
+using LTC.MovieService.Actors.Dtos.Input;
+using LTC.MovieService.Actors.Dtos.Output;
 
-namespace LTC.MovieService
+namespace LTC.MovieService.Actors
 {
-    public class StudioAppService : MovieServiceAppService, IStudioAppService
+    public class ActorAppService : MovieServiceAppService, IActorAppService
     {
-        private readonly IRepository<Studio, Guid> _repository;
+        private readonly IRepository<Actor, Guid> _repository;
 
-        public StudioAppService(IRepository<Studio, Guid> repository)
+        public ActorAppService(IRepository<Actor, Guid> repository)
         {
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<StudioOutputDto>> GetAllAsync(GetStudioListInputDto input)
+        public async Task<PagedResultDto<ActorOutputDto>> GetAllAsync(GetActorListInputDto input)
         {
             // TODO: Ensure mapping works or mapping configured in AutoMapper profile
             var query = await _repository.GetQueryableAsync();
@@ -35,30 +35,30 @@ namespace LTC.MovieService
             );
 
             // Dummy manual map to pass compile. Consider AutoMapper.
-            var items = entities.Select(e => new StudioOutputDto { Id = e.Id, Name = e.Name }).ToList();
-            return new PagedResultDto<StudioOutputDto>(totalCount, items);
+            var items = entities.Select(e => new ActorOutputDto { Id = e.Id, Name = e.Name }).ToList();
+            return new PagedResultDto<ActorOutputDto>(totalCount, items);
         }
 
-        public async Task<StudioDetailOutputDto> GetAsync(Guid id)
+        public async Task<ActorDetailOutputDto> GetAsync(Guid id)
         {
             var entity = await _repository.GetAsync(id);
-            return new StudioDetailOutputDto { Id = entity.Id, Name = entity.Name };
+            return new ActorDetailOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<StudioOutputDto> CreateAsync(CreateStudioInputDto input)
+        public async Task<ActorOutputDto> CreateAsync(CreateActorInputDto input)
         {
             // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new Studio() { Name = input.Name };
+            var entity = new Actor() { Name = input.Name };
             await _repository.InsertAsync(entity);
-            return new StudioOutputDto { Id = entity.Id, Name = entity.Name };
+            return new ActorOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<StudioOutputDto> UpdateAsync(Guid id, UpdateStudioInputDto input)
+        public async Task<ActorOutputDto> UpdateAsync(Guid id, UpdateActorInputDto input)
         {
             var entity = await _repository.GetAsync(id);
             entity.Name = input.Name;
             await _repository.UpdateAsync(entity);
-            return new StudioOutputDto { Id = entity.Id, Name = entity.Name };
+            return new ActorOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
         public async Task DeleteAsync(Guid id)

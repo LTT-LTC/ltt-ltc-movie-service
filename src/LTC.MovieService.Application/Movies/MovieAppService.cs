@@ -8,12 +8,12 @@ using LTC.MovieService.Entities;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
-using LTC.MovieService.Actor.Dtos.Output;
-using LTC.MovieService.Genre.Dtos.Output;
-using LTC.MovieService.Role.Dtos.Output;
-using LTC.MovieService.Studio.Dtos.Output;
+using LTC.MovieService.Actors.Dtos.Output;
+using LTC.MovieService.Genres.Dtos.Output;
+using LTC.MovieService.Roles.Dtos.Output;
+using LTC.MovieService.Studios.Dtos.Output;
 
-namespace LTC.MovieService
+namespace LTC.MovieService.Movies
 {
     public class MovieAppService : MovieServiceAppService, IMovieAppService
     {
@@ -343,8 +343,8 @@ namespace LTC.MovieService
 
             foreach (var movieActor in movieActors)
             {
-                var actor = actorLookup.TryGetValue(movieActor.ActorId, out var actorEntity)
-                    ? MapActor(actorEntity)
+                var actor = actorLookup.TryGetValue(movieActor.ActorId, out var actor)
+                    ? MapActor(actor)
                     : new ActorOutputDto { Id = movieActor.ActorId, Name = string.Empty };
 
                 if (!movieActorRolesByMovieActorId.TryGetValue(movieActor.Id, out var movieActorRoles))

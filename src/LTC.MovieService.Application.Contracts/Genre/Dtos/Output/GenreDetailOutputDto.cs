@@ -1,3 +1,3 @@
 using System;
-namespace LTC.MovieService.Genre.Dtos.Output;
+namespace LTC.MovieService.Genres.Dtos.Output;
 public class GenreDetailOutputDto : GenreOutputDto { }

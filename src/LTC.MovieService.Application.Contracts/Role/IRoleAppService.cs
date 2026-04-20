@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Application.Dtos;
-using LTC.MovieService.Role.Dtos.Input;
-using LTC.MovieService.Role.Dtos.Output;
+using LTC.MovieService.Roles.Dtos.Input;
+using LTC.MovieService.Roles.Dtos.Output;
 
-namespace LTC.MovieService.Role
+namespace LTC.MovieService.Roles
 {
     public interface IRoleAppService : IApplicationService
     {

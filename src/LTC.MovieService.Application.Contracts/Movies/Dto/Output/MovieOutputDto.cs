@@ -1,7 +1,7 @@
-using LTC.MovieService.Actor.Dtos.Output;
-using LTC.MovieService.Genre.Dtos.Output;
-using LTC.MovieService.Role.Dtos.Output;
-using LTC.MovieService.Studio.Dtos.Output;
+using LTC.MovieService.Actors.Dtos.Output;
+using LTC.MovieService.Genres.Dtos.Output;
+using LTC.MovieService.Roles.Dtos.Output;
+using LTC.MovieService.Studios.Dtos.Output;
 using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
