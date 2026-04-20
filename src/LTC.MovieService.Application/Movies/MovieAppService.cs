@@ -13,6 +13,8 @@ using LTC.MovieService.Genres.Dtos.Output;
 using LTC.MovieService.Ratings.Dtos.Output;
 using LTC.MovieService.Roles.Dtos.Output;
 using LTC.MovieService.Studios.Dtos.Output;
+using LTC.MovieService.MediaFiles;
+using LTC.MovieService.MediaFiles.Dtos.Input;
 
 namespace LTC.MovieService.Movies
 {
@@ -27,6 +29,7 @@ namespace LTC.MovieService.Movies
         private readonly IRepository<MovieActorRole, Guid> _movieActorRoleRepository;
         private readonly IRepository<MovieRole, Guid> _movieRoleRepository;
         private readonly IRepository<Rating, Guid> _ratingRepository;
+        private readonly IMovieMediaFileAppService _movieMediaFileAppService;
 
         public MovieAppService(
             IRepository<Movie, Guid> repository,
@@ -37,7 +40,8 @@ namespace LTC.MovieService.Movies
             IRepository<MovieActor, Guid> movieActorRepository,
             IRepository<MovieActorRole, Guid> movieActorRoleRepository,
             IRepository<MovieRole, Guid> movieRoleRepository,
-            IRepository<Rating, Guid> ratingRepository)
+            IRepository<Rating, Guid> ratingRepository,
+            IMovieMediaFileAppService movieMediaFileAppService)
         {
             _repository = repository;
             _studioRepository = studioRepository;
@@ -48,6 +52,7 @@ namespace LTC.MovieService.Movies
             _movieActorRoleRepository = movieActorRoleRepository;
             _movieRoleRepository = movieRoleRepository;
             _ratingRepository = ratingRepository;
+            _movieMediaFileAppService = movieMediaFileAppService;
         }
 
         public async Task<PagedResultDto<MovieOutputDto>> GetAllAsync(GetMovieListInputDto input)
@@ -77,12 +82,18 @@ namespace LTC.MovieService.Movies
 
         public async Task<MovieOutputDto> CreateAsync(CreateMovieInputDto input)
         {
-            if (CurrentUser == null || !CurrentUser.IsInRole("admin"))
+            if (CurrentUser == null || (!CurrentUser.IsInRole("admin") && !CurrentUser.IsInRole("manager")))
             {
-                throw new UserFriendlyException("Only admins can perform this action.");
+                throw new UserFriendlyException("Only admins and managers can perform this action.");
             }
 
             var studioId = await ResolveStudioIdAsync(input.StudioId, input.StudioName);
+            var uploadedPosterUrl = input.ImageFile != null
+                ? (await _movieMediaFileAppService.UploadPosterAsync(new UploadMoviePosterInputDto
+                {
+                    ImageFile = input.ImageFile
+                })).SecureUrl
+                : null;
 
             var entity = new Movie() { 
                 Title = input.Title,
@@ -92,7 +103,7 @@ namespace LTC.MovieService.Movies
                 PremiereDate = input.PremiereDate,
                 Status = input.Status,
                 Description = input.Description,
-                PosterUrl = input.PosterUrl,
+                PosterUrl = uploadedPosterUrl ?? input.PosterUrl,
                 TrailerUrl = input.TrailerUrl,
                 StudioId = studioId,
                 RatingId = input.RatingId,
@@ -107,9 +118,9 @@ namespace LTC.MovieService.Movies
 
         public async Task<MovieOutputDto> UpdateAsync(Guid id, UpdateMovieInputDto input)
         {
-            if (CurrentUser == null || !CurrentUser.IsInRole("admin"))
+            if (CurrentUser == null || (!CurrentUser.IsInRole("admin") && !CurrentUser.IsInRole("manager")))
             {
-                throw new UserFriendlyException("Only admins can perform this action.");
+                throw new UserFriendlyException("Only admins and managers can perform this action.");
             }
 
             var entity = await _repository.GetAsync(id);
@@ -121,7 +132,18 @@ namespace LTC.MovieService.Movies
             if (input.PremiereDate.HasValue) entity.PremiereDate = input.PremiereDate.Value;
             if (!string.IsNullOrWhiteSpace(input.Status)) entity.Status = input.Status;
             if (input.Description != null) entity.Description = input.Description;
-            if (input.PosterUrl != null) entity.PosterUrl = input.PosterUrl;
+            if (input.ImageFile != null)
+            {
+                var uploadedPoster = await _movieMediaFileAppService.UploadPosterAsync(new UploadMoviePosterInputDto
+                {
+                    ImageFile = input.ImageFile
+                });
+                entity.PosterUrl = uploadedPoster.SecureUrl;
+            }
+            else if (input.PosterUrl != null)
+            {
+                entity.PosterUrl = input.PosterUrl;
+            }
             if (input.TrailerUrl != null) entity.TrailerUrl = input.TrailerUrl;
             if (input.StudioId.HasValue && input.StudioId.Value != Guid.Empty)
             {
