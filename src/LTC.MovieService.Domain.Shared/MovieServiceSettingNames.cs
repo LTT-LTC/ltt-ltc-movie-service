@@ -8,6 +8,6 @@ namespace LTC.MovieService
 {
     public class MovieServiceSettingNames
     {
-        public const string DefaultRoute = "/ltc/movie-service/api";
+        public const string DefaultRoute = "/ltc/movie-service";
     }
 }

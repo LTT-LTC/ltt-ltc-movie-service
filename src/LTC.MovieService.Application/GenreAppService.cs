@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using System.Linq;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
-using LTC.MovieService.Dtos.Input;
-using LTC.MovieService.Dtos.Output;
 using LTC.MovieService.Entities;
+using LTC.MovieService.Genre;
+using LTC.MovieService.Genre.Dtos.Input;
+using LTC.MovieService.Genre.Dtos.Output;
 
 namespace LTC.MovieService
 {

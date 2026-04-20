@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\common.props" />
 
@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\LTC.Shared.CrossCuttingConcerns\LTC.Shared.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\LTC.MovieService.Domain\LTC.MovieService.Domain.csproj" />
     <ProjectReference Include="..\LTC.MovieService.Domain.Shared\LTC.MovieService.Domain.Shared.csproj" />
   </ItemGroup>
 
@@ -21,6 +22,10 @@
     <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="10.1.1" />
     <PackageReference Include="Volo.Abp.FeatureManagement.Application.Contracts" Version="10.1.1" />
     <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dtos\Output\" />
   </ItemGroup>
 
 </Project>

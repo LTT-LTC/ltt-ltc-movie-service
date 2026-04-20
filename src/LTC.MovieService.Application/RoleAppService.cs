@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LTC.MovieService.Dtos.Input;
-using LTC.MovieService.Dtos.Output;
 using LTC.MovieService.Entities;
+using LTC.MovieService.Role;
+using LTC.MovieService.Role.Dtos.Input;
+using LTC.MovieService.Role.Dtos.Output;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
