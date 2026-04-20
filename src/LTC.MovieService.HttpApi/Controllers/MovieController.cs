@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using LTC.MovieService.Dtos.Input;
 using LTC.MovieService.Dtos.Output;
@@ -36,14 +35,16 @@ public class MovieController : MovieServiceController, IMovieAppService
 
     [HttpPost("movie")]
     [Authorize(Roles = "Admin,Manager")]
-    public virtual Task<MovieOutputDto> CreateAsync(CreateMovieInputDto input)
+    [Consumes("multipart/form-data")]
+    public virtual Task<MovieOutputDto> CreateAsync([FromForm] CreateMovieInputDto input)
     {
         return _movieAppService.CreateAsync(input);
     }
 
     [HttpPut("movie/{id}")]
     [Authorize(Roles = "Admin,Manager")]
-    public virtual Task<MovieOutputDto> UpdateAsync(Guid id, UpdateMovieInputDto input)
+    [Consumes("multipart/form-data")]
+    public virtual Task<MovieOutputDto> UpdateAsync(Guid id, [FromForm] UpdateMovieInputDto input)
     {
         return _movieAppService.UpdateAsync(id, input);
     }

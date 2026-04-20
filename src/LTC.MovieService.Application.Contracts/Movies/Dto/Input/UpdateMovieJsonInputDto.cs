@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 
 namespace LTC.MovieService.Dtos.Input
 {
-    public class CreateMovieInputDto
+    public class UpdateMovieJsonInputDto
     {
         public Guid Id { get; set; }
         public Guid? StudioId { get; set; }
@@ -21,13 +20,6 @@ namespace LTC.MovieService.Dtos.Input
         public string? Status { get; set; }
         public string? Description { get; set; }
         public string? PosterUrl { get; set; }
-        public IFormFile? ImageFile { get; set; }
         public string? TrailerUrl { get; set; }
-    }
-
-    public class CreateMovieActorRoleInputDto
-    {
-        public string ActorName { get; set; } = string.Empty;
-        public string RoleName { get; set; } = string.Empty;
     }
 }
