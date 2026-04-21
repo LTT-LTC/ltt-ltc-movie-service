@@ -72,6 +72,20 @@ public class MovieServiceHttpApiHostModule : AbpModule
             options.TenantKey = "X-Tenant";
         });
 
+        Configure<AbpTenantResolveOptions>(options =>
+        {
+            // Keep header/cookie based tenant resolution ahead of current-user claims.
+            // Customer JWTs can resolve as host and otherwise short-circuit tenant selection.
+            var currentUserResolver = options.TenantResolvers
+                .FirstOrDefault(resolver => resolver.Name == "CurrentUser");
+
+            if (currentUserResolver != null)
+            {
+                options.TenantResolvers.Remove(currentUserResolver);
+                options.TenantResolvers.Add(currentUserResolver);
+            }
+        });
+
         if (hostingEnvironment.IsDevelopment())
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
