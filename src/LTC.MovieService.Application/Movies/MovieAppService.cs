@@ -15,6 +15,7 @@ using LTC.MovieService.Roles.Dtos.Output;
 using LTC.MovieService.Studios.Dtos.Output;
 using LTC.MovieService.MediaFiles;
 using LTC.MovieService.MediaFiles.Dtos.Input;
+using LTC.Shared.Hosting.Microservices.Timing;
 
 namespace LTC.MovieService.Movies
 {
@@ -30,6 +31,7 @@ namespace LTC.MovieService.Movies
         private readonly IRepository<MovieRole, Guid> _movieRoleRepository;
         private readonly IRepository<Rating, Guid> _ratingRepository;
         private readonly IMovieMediaFileAppService _movieMediaFileAppService;
+        private readonly IGmt7Clock _gmt7Clock;
 
         public MovieAppService(
             IRepository<Movie, Guid> repository,
@@ -41,7 +43,8 @@ namespace LTC.MovieService.Movies
             IRepository<MovieActorRole, Guid> movieActorRoleRepository,
             IRepository<MovieRole, Guid> movieRoleRepository,
             IRepository<Rating, Guid> ratingRepository,
-            IMovieMediaFileAppService movieMediaFileAppService)
+            IMovieMediaFileAppService movieMediaFileAppService,
+            IGmt7Clock gmt7Clock)
         {
             _repository = repository;
             _studioRepository = studioRepository;
@@ -53,6 +56,7 @@ namespace LTC.MovieService.Movies
             _movieRoleRepository = movieRoleRepository;
             _ratingRepository = ratingRepository;
             _movieMediaFileAppService = movieMediaFileAppService;
+            _gmt7Clock = gmt7Clock;
         }
 
         public async Task<PagedResultDto<MovieOutputDto>> GetAllAsync(GetMovieListInputDto input)
@@ -107,7 +111,7 @@ namespace LTC.MovieService.Movies
                 TrailerUrl = input.TrailerUrl,
                 StudioId = studioId,
                 RatingId = input.RatingId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = _gmt7Clock.Gmt7Now,
             };
             await _repository.InsertAsync(entity);
 
@@ -158,7 +162,7 @@ namespace LTC.MovieService.Movies
                 entity.RatingId = input.RatingId.Value == Guid.Empty ? null : input.RatingId;
             }
 
-            entity.UpdatedAt = DateTime.UtcNow;
+            entity.UpdatedAt = _gmt7Clock.Gmt7Now;
 
             await _repository.UpdateAsync(entity);
 
