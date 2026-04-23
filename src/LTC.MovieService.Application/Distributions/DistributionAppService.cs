@@ -7,6 +7,7 @@ using LTC.MovieService.Distributions.Dtos.Input;
 using LTC.MovieService.Distributions.Dtos.Output;
 using LTC.MovieService.Entities;
 using LTC.MovieService.Movies;
+using LTC.Shared.Hosting.Microservices.Timing;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
@@ -16,7 +17,8 @@ namespace LTC.MovieService.Distributions
     public class DistributionAppService(
         IRepository<MovieDistribution, Guid> distributionRepository,
         IRepository<Movie, Guid> movieRepository,
-        MovieAppService movieAppService) 
+        MovieAppService movieAppService,
+        IGmt7Clock gmt7Clock) 
         : MovieServiceAppService, IDistributionAppService
     {
         public async Task<PagedResultDto<DistributionOutputDto>> GetListAsync(GetDistributionListInputDto input)
@@ -64,7 +66,7 @@ namespace LTC.MovieService.Distributions
                 LicenseStartDate = input.LicenseStartDate,
                 LicenseEndDate = input.LicenseEndDate,
                 IsExclusive = input.IsExclusive,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = gmt7Clock.Gmt7Now
             };
 
             await distributionRepository.InsertAsync(dist);
@@ -89,7 +91,7 @@ namespace LTC.MovieService.Distributions
             dist.LicenseStartDate = input.LicenseStartDate;
             dist.LicenseEndDate = input.LicenseEndDate;
             dist.IsExclusive = input.IsExclusive;
-            dist.UpdatedAt = DateTime.UtcNow;
+            dist.UpdatedAt = gmt7Clock.Gmt7Now;
 
             await distributionRepository.UpdateAsync(dist);
 
