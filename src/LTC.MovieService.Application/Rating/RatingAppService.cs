@@ -20,7 +20,7 @@ namespace LTC.MovieService.Ratings
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<RatingOutputDto>> GetAllAsync(GetRatingListInputDto input)
+        public async Task<PagedResultDto<RatingOutputDto>> GetRatingListAsync(GetRatingListInputDto input)
         {
             var query = await _repository.GetQueryableAsync();
             
@@ -44,20 +44,20 @@ namespace LTC.MovieService.Ratings
             return new PagedResultDto<RatingOutputDto>(totalCount, items);
         }
 
-        public async Task<RatingOutputDto> GetAsync(Guid id)
+        public async Task<RatingOutputDto> GetRatingAsync(Guid id)
         {
             var e = await _repository.GetAsync(id);
             return new RatingOutputDto { Id = e.Id, Code = e.Code, Name = e.Name, Description = e.Description };
         }
 
-        public async Task<RatingOutputDto> CreateAsync(CreateRatingInputDto input)
+        public async Task<RatingOutputDto> CreateRatingAsync(CreateRatingInputDto input)
         {
             var e = new Rating { Code = input.Code, Name = input.Name, Description = input.Description };
             await _repository.InsertAsync(e);
             return new RatingOutputDto { Id = e.Id, Code = e.Code, Name = e.Name, Description = e.Description };
         }
 
-        public async Task<RatingOutputDto> UpdateAsync(Guid id, UpdateRatingInputDto input)
+        public async Task<RatingOutputDto> UpdateRatingAsync(Guid id, UpdateRatingInputDto input)
         {
             var e = await _repository.GetAsync(id);
             e.Code = input.Code;
@@ -67,7 +67,7 @@ namespace LTC.MovieService.Ratings
             return new RatingOutputDto { Id = e.Id, Code = e.Code, Name = e.Name, Description = e.Description };
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteRatingAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
         }

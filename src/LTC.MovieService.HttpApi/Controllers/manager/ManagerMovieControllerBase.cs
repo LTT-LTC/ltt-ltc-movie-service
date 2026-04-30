@@ -12,7 +12,7 @@ namespace LTC.MovieService.Controllers.Manager
     [RemoteService]
     [Area("manager")]
     [ApiController]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager,manager")]
     public abstract class ManagerMovieControllerBase : AbpControllerBase
     {
     }

@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
@@ -10,28 +9,16 @@ using LTC.MovieService.Formats.Dtos.Output;
 
 namespace LTC.MovieService.Controllers;
 
-[Route(MovieServiceSettingNames.DefaultRoute)]
-public class FormatController : AbpControllerBase
+public abstract class FormatController : AbpControllerBase
 {
     private readonly IFormatAppService _appService;
     public FormatController(IFormatAppService appService) { _appService = appService; }
 
     [HttpGet("format-all")]
-    public async Task<PagedResultDto<FormatOutputDto>> GetAllAsync([FromQuery] GetFormatListInputDto input) { return await _appService.GetAllAsync(input); }
+    public async Task<PagedResultDto<FormatOutputDto>> GetFormatListAsync([FromQuery] GetFormatListInputDto input) { return await _appService.GetFormatListAsync(input); }
 
     [HttpGet("format/{id}")]
-    public async Task<FormatDetailOutputDto> GetAsync(Guid id) { return await _appService.GetAsync(id); }
+    public async Task<FormatDetailOutputDto> GetFormatAsync(Guid id) { return await _appService.GetFormatAsync(id); }
 
-    [HttpPost("format")]
-    [Authorize(Roles = "Admin,Manager")]
-    public async Task<FormatOutputDto> CreateAsync(CreateFormatInputDto input) { return await _appService.CreateAsync(input); }
-
-    [HttpPut("format/{id}")]
-    [Authorize(Roles = "Admin,Manager")]
-    public async Task<FormatOutputDto> UpdateAsync(Guid id, UpdateFormatInputDto input) { return await _appService.UpdateAsync(id, input); }
-
-    [HttpDelete("format/{id}")]
-    [Authorize(Roles = "Admin,Manager")]
-    public async Task DeleteAsync(Guid id) { await _appService.DeleteAsync(id); }
 }
 

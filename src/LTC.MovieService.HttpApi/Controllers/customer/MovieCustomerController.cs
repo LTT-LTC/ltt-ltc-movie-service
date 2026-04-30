@@ -2,33 +2,33 @@ using System;
 using System.Threading.Tasks;
 using LTC.MovieService.Dtos.Input;
 using LTC.MovieService.Dtos.Output;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 
-namespace LTC.MovieService.Controllers;
+namespace LTC.MovieService.Controllers.Customer;
 
-[Area(MovieServiceRemoteServiceConsts.ModuleName)]
-[RemoteService(Name = MovieServiceRemoteServiceConsts.RemoteServiceName)]
-public abstract class MovieController : MovieServiceController
+[Route(MovieServiceSettingNames.DefaultRoute)]
+public class MovieCustomerController : MovieServiceController
 {
     private readonly IMovieAppService _movieAppService;
 
-    public MovieController(IMovieAppService movieAppService)
+    public MovieCustomerController(IMovieAppService movieAppService)
     {
         _movieAppService = movieAppService;
     }
 
+    [AllowAnonymous]
     [HttpGet("movie-all")]
-    public virtual Task<PagedResultDto<MovieOutputDto>> GetMovieListAsync([FromQuery] GetMovieListInputDto input)
+    public Task<PagedResultDto<MovieOutputDto>> GetMovieListAsync(GetMovieListInputDto input)
     {
         return _movieAppService.GetMovieListAsync(input);
     }
 
+    [AllowAnonymous]
     [HttpGet("movie/{id}")]
-    public virtual Task<MovieDetailOutputDto> GetMovieAsync(Guid id)
+    public Task<MovieDetailOutputDto> GetMovieAsync(Guid id)
     {
         return _movieAppService.GetMovieAsync(id);
     }
-
 }

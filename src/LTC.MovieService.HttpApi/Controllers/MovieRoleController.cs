@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
@@ -10,9 +9,7 @@ using LTC.MovieService.Roles.Dtos.Output;
 
 namespace LTC.MovieService.Controllers
 {
-    [Route(MovieServiceSettingNames.DefaultRoute)]
-    [Authorize(Roles = "Admin,Manager")]
-    public class MovieRoleController : AbpControllerBase 
+    public abstract class MovieRoleController : AbpControllerBase 
     {
         private readonly IRoleAppService _appService;
 
@@ -22,48 +19,22 @@ namespace LTC.MovieService.Controllers
         }
 
         [HttpGet("role-all")]
-        public async Task<PagedResultDto<RoleOutputDto>> GetAllAsync([FromQuery] GetRoleListInputDto input) 
+        public async Task<PagedResultDto<RoleOutputDto>> GetRoleListAsync([FromQuery] GetRoleListInputDto input) 
         { 
             /// <summary>
             /// Get all movie roles (Admin/Manager only).
             /// </summary>
-            return await _appService.GetAllAsync(input); 
+            return await _appService.GetRoleListAsync(input); 
         }
 
         [HttpGet("role/{id}")]
-        public async Task<RoleDetailOutputDto> GetAsync(Guid id) 
+        public async Task<RoleDetailOutputDto> GetRoleAsync(Guid id) 
         { 
             /// <summary>
             /// Get movie role details (Admin/Manager only).
             /// </summary>
-            return await _appService.GetAsync(id); 
+            return await _appService.GetRoleAsync(id); 
         }
 
-        [HttpPost("role")]
-        public async Task<RoleOutputDto> CreateAsync(CreateRoleInputDto input) 
-        { 
-            /// <summary>
-            /// Create a new movie role (Admin/Manager only).
-            /// </summary>
-            return await _appService.CreateAsync(input); 
-        }
-
-        [HttpPut("role/{id}")]
-        public async Task<RoleOutputDto> UpdateAsync(Guid id, UpdateRoleInputDto input) 
-        { 
-            /// <summary>
-            /// Update a movie role (Admin/Manager only).
-            /// </summary>
-            return await _appService.UpdateAsync(id, input); 
-        }
-
-        [HttpDelete("role/{id}")]
-        public async Task DeleteAsync(Guid id) 
-        { 
-            /// <summary>
-            /// Delete a movie role (Admin/Manager only).
-            /// </summary>
-            await _appService.DeleteAsync(id); 
-        }
     }
 }

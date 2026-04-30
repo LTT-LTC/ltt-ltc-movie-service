@@ -9,10 +9,10 @@ namespace LTC.MovieService.Ratings
 {
     public interface IRatingAppService : IApplicationService
     {
-        Task<PagedResultDto<RatingOutputDto>> GetAllAsync(GetRatingListInputDto input);
-        Task<RatingOutputDto> GetAsync(Guid id);
-        Task<RatingOutputDto> CreateAsync(CreateRatingInputDto input);
-        Task<RatingOutputDto> UpdateAsync(Guid id, UpdateRatingInputDto input);
-        Task DeleteAsync(Guid id);
+        Task<PagedResultDto<RatingOutputDto>> GetRatingListAsync(GetRatingListInputDto input);
+        Task<RatingOutputDto> GetRatingAsync(Guid id);
+        Task<RatingOutputDto> CreateRatingAsync(CreateRatingInputDto input);
+        Task<RatingOutputDto> UpdateRatingAsync(Guid id, UpdateRatingInputDto input);
+        Task DeleteRatingAsync(Guid id);
     }
 }

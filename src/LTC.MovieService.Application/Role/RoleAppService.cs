@@ -20,7 +20,7 @@ namespace LTC.MovieService.Roles
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<RoleOutputDto>> GetAllAsync(GetRoleListInputDto input)
+        public async Task<PagedResultDto<RoleOutputDto>> GetRoleListAsync(GetRoleListInputDto input)
         {
             var query = await _repository.GetQueryableAsync();
             
@@ -42,20 +42,20 @@ namespace LTC.MovieService.Roles
             return new PagedResultDto<RoleOutputDto>(totalCount, items);
         }
 
-        public async Task<RoleDetailOutputDto> GetAsync(Guid id)
+        public async Task<RoleDetailOutputDto> GetRoleAsync(Guid id)
         {
             var e = await _repository.GetAsync(id);
             return new RoleDetailOutputDto { Id = e.Id, Name = e.Name };
         }
 
-        public async Task<RoleOutputDto> CreateAsync(CreateRoleInputDto input)
+        public async Task<RoleOutputDto> CreateRoleAsync(CreateRoleInputDto input)
         {
             var e = new MovieRole { Name = input.Name };
             await _repository.InsertAsync(e);
             return new RoleOutputDto { Id = e.Id, Name = e.Name };
         }
 
-        public async Task<RoleOutputDto> UpdateAsync(Guid id, UpdateRoleInputDto input)
+        public async Task<RoleOutputDto> UpdateRoleAsync(Guid id, UpdateRoleInputDto input)
         {
             var e = await _repository.GetAsync(id);
             e.Name = input.Name;
@@ -63,7 +63,7 @@ namespace LTC.MovieService.Roles
             return new RoleOutputDto { Id = e.Id, Name = e.Name };
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteRoleAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
         }

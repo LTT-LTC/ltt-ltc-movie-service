@@ -8,9 +8,9 @@ using LTC.MovieService.Actors.Dtos.Output;
 namespace LTC.MovieService.Actors;
 public interface IActorAppService : IApplicationService
 {
-Task<PagedResultDto<ActorOutputDto>> GetAllAsync(GetActorListInputDto input);
-Task<ActorDetailOutputDto> GetAsync(Guid id);
-Task<ActorOutputDto> CreateAsync(CreateActorInputDto input);
-Task<ActorOutputDto> UpdateAsync(Guid id, UpdateActorInputDto input);
-Task DeleteAsync(Guid id);
+Task<PagedResultDto<ActorOutputDto>> GetActorListAsync(GetActorListInputDto input);
+Task<ActorDetailOutputDto> GetActorAsync(Guid id);
+Task<ActorOutputDto> CreateActorAsync(CreateActorInputDto input);
+Task<ActorOutputDto> UpdateActorAsync(Guid id, UpdateActorInputDto input);
+Task DeleteActorAsync(Guid id);
 }

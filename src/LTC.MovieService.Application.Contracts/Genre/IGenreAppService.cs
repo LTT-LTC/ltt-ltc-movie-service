@@ -8,9 +8,9 @@ using LTC.MovieService.Genres.Dtos.Output;
 namespace LTC.MovieService.Genres;
 public interface IGenreAppService : IApplicationService
 {
-Task<PagedResultDto<GenreOutputDto>> GetAllAsync(GetGenreListInputDto input);
-Task<GenreDetailOutputDto> GetAsync(Guid id);
-Task<GenreOutputDto> CreateAsync(CreateGenreInputDto input);
-Task<GenreOutputDto> UpdateAsync(Guid id, UpdateGenreInputDto input);
-Task DeleteAsync(Guid id);
+Task<PagedResultDto<GenreOutputDto>> GetGenreListAsync(GetGenreListInputDto input);
+Task<GenreDetailOutputDto> GetGenreAsync(Guid id);
+Task<GenreOutputDto> CreateGenreAsync(CreateGenreInputDto input);
+Task<GenreOutputDto> UpdateGenreAsync(Guid id, UpdateGenreInputDto input);
+Task DeleteGenreAsync(Guid id);
 }

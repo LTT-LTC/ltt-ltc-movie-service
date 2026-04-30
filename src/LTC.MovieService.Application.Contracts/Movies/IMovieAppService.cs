@@ -9,10 +9,10 @@ namespace LTC.MovieService
 {
     public interface IMovieAppService : IApplicationService
     {
-        Task<PagedResultDto<MovieOutputDto>> GetAllAsync(GetMovieListInputDto input);
-        Task<MovieDetailOutputDto> GetAsync(Guid id);
-        Task<MovieOutputDto> CreateAsync(CreateMovieInputDto input);
-        Task<MovieOutputDto> UpdateAsync(Guid id, UpdateMovieInputDto input);
-        Task DeleteAsync(Guid id);
+        Task<PagedResultDto<MovieOutputDto>> GetMovieListAsync(GetMovieListInputDto input);
+        Task<MovieDetailOutputDto> GetMovieAsync(Guid id);
+        Task<MovieOutputDto> CreateMovieAsync(CreateMovieInputDto input);
+        Task<MovieOutputDto> UpdateMovieAsync(Guid id, UpdateMovieInputDto input);
+        Task DeleteMovieAsync(Guid id);
     }
 }
