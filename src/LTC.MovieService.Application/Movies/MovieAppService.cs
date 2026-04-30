@@ -59,7 +59,7 @@ namespace LTC.MovieService.Movies
             _gmt7Clock = gmt7Clock;
         }
 
-        public async Task<PagedResultDto<MovieOutputDto>> GetAllAsync(GetMovieListInputDto input)
+        public async Task<PagedResultDto<MovieOutputDto>> GetMovieListAsync(GetMovieListInputDto input)
         {
             var query = await _repository.GetQueryableAsync();
             var maxCount = input.Fetch > 0 ? input.Fetch : 10;
@@ -74,7 +74,7 @@ namespace LTC.MovieService.Movies
             return new PagedResultDto<MovieOutputDto>(totalCount, items);
         }
 
-        public async Task<MovieDetailOutputDto> GetAsync(Guid id)
+        public async Task<MovieDetailOutputDto> GetMovieAsync(Guid id)
         {
             var movie = await _repository.FirstOrDefaultAsync(m => m.Id == id);
             if (movie == null)
@@ -84,7 +84,7 @@ namespace LTC.MovieService.Movies
             return await BuildMovieDetailOutputAsync(movie);
         }
 
-        public async Task<MovieOutputDto> CreateAsync(CreateMovieInputDto input)
+        public async Task<MovieOutputDto> CreateMovieAsync(CreateMovieInputDto input)
         {
             if (CurrentUser == null || (!CurrentUser.IsInRole("admin") && !CurrentUser.IsInRole("manager")))
             {
@@ -120,7 +120,7 @@ namespace LTC.MovieService.Movies
             return await BuildMovieOutputAsync(entity);
         }
 
-        public async Task<MovieOutputDto> UpdateAsync(Guid id, UpdateMovieInputDto input)
+        public async Task<MovieOutputDto> UpdateMovieAsync(Guid id, UpdateMovieInputDto input)
         {
             if (CurrentUser == null || (!CurrentUser.IsInRole("admin") && !CurrentUser.IsInRole("manager")))
             {
@@ -179,7 +179,7 @@ namespace LTC.MovieService.Movies
             return await BuildMovieOutputAsync(entity);
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteMovieAsync(Guid id)
         {
             if (CurrentUser == null || !CurrentUser.IsInRole("admin"))
             {

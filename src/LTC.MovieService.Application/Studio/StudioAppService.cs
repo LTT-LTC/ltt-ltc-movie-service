@@ -20,7 +20,7 @@ namespace LTC.MovieService.Studios
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<StudioOutputDto>> GetAllAsync(GetStudioListInputDto input)
+        public async Task<PagedResultDto<StudioOutputDto>> GetStudioListAsync(GetStudioListInputDto input)
         {
             // TODO: Ensure mapping works or mapping configured in AutoMapper profile
             var query = await _repository.GetQueryableAsync();
@@ -39,13 +39,13 @@ namespace LTC.MovieService.Studios
             return new PagedResultDto<StudioOutputDto>(totalCount, items);
         }
 
-        public async Task<StudioDetailOutputDto> GetAsync(Guid id)
+        public async Task<StudioDetailOutputDto> GetStudioAsync(Guid id)
         {
             var entity = await _repository.GetAsync(id);
             return new StudioDetailOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<StudioOutputDto> CreateAsync(CreateStudioInputDto input)
+        public async Task<StudioOutputDto> CreateStudioAsync(CreateStudioInputDto input)
         {
             // Dummy creation for boilerplate. Update with proper mapping.
             var entity = new Studio() { Name = input.Name };
@@ -53,7 +53,7 @@ namespace LTC.MovieService.Studios
             return new StudioOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<StudioOutputDto> UpdateAsync(Guid id, UpdateStudioInputDto input)
+        public async Task<StudioOutputDto> UpdateStudioAsync(Guid id, UpdateStudioInputDto input)
         {
             var entity = await _repository.GetAsync(id);
             entity.Name = input.Name;
@@ -61,7 +61,7 @@ namespace LTC.MovieService.Studios
             return new StudioOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteStudioAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
         }

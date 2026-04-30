@@ -11,7 +11,7 @@ namespace LTC.MovieService.Controllers.Admin
     [RemoteService]
     [Area("admin")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,admin")]
     public abstract class AdminMovieControllerBase : AbpControllerBase
     {
     }

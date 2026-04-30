@@ -9,10 +9,10 @@ namespace LTC.MovieService.Roles
 {
     public interface IRoleAppService : IApplicationService
     {
-        Task<PagedResultDto<RoleOutputDto>> GetAllAsync(GetRoleListInputDto input);
-        Task<RoleDetailOutputDto> GetAsync(Guid id);
-        Task<RoleOutputDto> CreateAsync(CreateRoleInputDto input);
-        Task<RoleOutputDto> UpdateAsync(Guid id, UpdateRoleInputDto input);
-        Task DeleteAsync(Guid id);
+        Task<PagedResultDto<RoleOutputDto>> GetRoleListAsync(GetRoleListInputDto input);
+        Task<RoleDetailOutputDto> GetRoleAsync(Guid id);
+        Task<RoleOutputDto> CreateRoleAsync(CreateRoleInputDto input);
+        Task<RoleOutputDto> UpdateRoleAsync(Guid id, UpdateRoleInputDto input);
+        Task DeleteRoleAsync(Guid id);
     }
 }

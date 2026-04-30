@@ -10,9 +10,9 @@ namespace LTC.MovieService.Distributions
 {
     public interface IDistributionAppService : IApplicationService
     {
-        Task<PagedResultDto<DistributionOutputDto>> GetListAsync(GetDistributionListInputDto input);
-        Task<DistributionOutputDto> CreateAsync(CreateDistributionInputDto input);
-        Task<DistributionOutputDto> UpdateAsync(Guid id, UpdateDistributionInputDto input);
-        Task DeleteAsync(Guid id);
+        Task<PagedResultDto<DistributionOutputDto>> GetDistributionListAsync(GetDistributionListInputDto input);
+        Task<DistributionOutputDto> CreateDistributionAsync(CreateDistributionInputDto input);
+        Task<DistributionOutputDto> UpdateDistributionAsync(Guid id, UpdateDistributionInputDto input);
+        Task DeleteDistributionAsync(Guid id);
     }
 }

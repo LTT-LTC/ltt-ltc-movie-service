@@ -8,9 +8,9 @@ using LTC.MovieService.Formats.Dtos.Output;
 namespace LTC.MovieService.Formats;
 public interface IFormatAppService : IApplicationService
 {
-Task<PagedResultDto<FormatOutputDto>> GetAllAsync(GetFormatListInputDto input);
-Task<FormatDetailOutputDto> GetAsync(Guid id);
-Task<FormatOutputDto> CreateAsync(CreateFormatInputDto input);
-Task<FormatOutputDto> UpdateAsync(Guid id, UpdateFormatInputDto input);
-Task DeleteAsync(Guid id);
+Task<PagedResultDto<FormatOutputDto>> GetFormatListAsync(GetFormatListInputDto input);
+Task<FormatDetailOutputDto> GetFormatAsync(Guid id);
+Task<FormatOutputDto> CreateFormatAsync(CreateFormatInputDto input);
+Task<FormatOutputDto> UpdateFormatAsync(Guid id, UpdateFormatInputDto input);
+Task DeleteFormatAsync(Guid id);
 }

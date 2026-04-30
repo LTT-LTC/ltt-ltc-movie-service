@@ -21,7 +21,7 @@ namespace LTC.MovieService.Distributions
         IGmt7Clock gmt7Clock) 
         : MovieServiceAppService, IDistributionAppService
     {
-        public async Task<PagedResultDto<DistributionOutputDto>> GetListAsync(GetDistributionListInputDto input)
+        public async Task<PagedResultDto<DistributionOutputDto>> GetDistributionListAsync(GetDistributionListInputDto input)
         {
             var queryable = await distributionRepository.GetQueryableAsync();
             var moviesQueryable = await movieRepository.GetQueryableAsync();
@@ -58,7 +58,7 @@ namespace LTC.MovieService.Distributions
             return new PagedResultDto<DistributionOutputDto>(totalCount, items);
         }
 
-        public async Task<DistributionOutputDto> CreateAsync(CreateDistributionInputDto input)
+        public async Task<DistributionOutputDto> CreateDistributionAsync(CreateDistributionInputDto input)
         {
             var dist = new MovieDistribution
             {
@@ -85,7 +85,7 @@ namespace LTC.MovieService.Distributions
             };
         }
 
-        public async Task<DistributionOutputDto> UpdateAsync(Guid id, UpdateDistributionInputDto input)
+        public async Task<DistributionOutputDto> UpdateDistributionAsync(Guid id, UpdateDistributionInputDto input)
         {
             var dist = await distributionRepository.GetAsync(id);
             dist.LicenseStartDate = input.LicenseStartDate;
@@ -109,7 +109,7 @@ namespace LTC.MovieService.Distributions
             };
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteDistributionAsync(Guid id)
         {
             await distributionRepository.DeleteAsync(id);
         }

@@ -20,7 +20,7 @@ namespace LTC.MovieService.Formats
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<FormatOutputDto>> GetAllAsync(GetFormatListInputDto input)
+        public async Task<PagedResultDto<FormatOutputDto>> GetFormatListAsync(GetFormatListInputDto input)
         {
             // TODO: Ensure mapping works or mapping configured in AutoMapper profile
             var query = await _repository.GetQueryableAsync();
@@ -39,13 +39,13 @@ namespace LTC.MovieService.Formats
             return new PagedResultDto<FormatOutputDto>(totalCount, items);
         }
 
-        public async Task<FormatDetailOutputDto> GetAsync(Guid id)
+        public async Task<FormatDetailOutputDto> GetFormatAsync(Guid id)
         {
             var entity = await _repository.GetAsync(id);
             return new FormatDetailOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<FormatOutputDto> CreateAsync(CreateFormatInputDto input)
+        public async Task<FormatOutputDto> CreateFormatAsync(CreateFormatInputDto input)
         {
             // Dummy creation for boilerplate. Update with proper mapping.
             var entity = new Format() { Name = input.Name };
@@ -53,7 +53,7 @@ namespace LTC.MovieService.Formats
             return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<FormatOutputDto> UpdateAsync(Guid id, UpdateFormatInputDto input)
+        public async Task<FormatOutputDto> UpdateFormatAsync(Guid id, UpdateFormatInputDto input)
         {
             var entity = await _repository.GetAsync(id);
             entity.Name = input.Name;
@@ -61,7 +61,7 @@ namespace LTC.MovieService.Formats
             return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteFormatAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
         }

@@ -21,7 +21,7 @@ namespace LTC.MovieService.Genres
             _repository = repository;
         }
 
-        public async Task<PagedResultDto<GenreOutputDto>> GetAllAsync(GetGenreListInputDto input)
+        public async Task<PagedResultDto<GenreOutputDto>> GetGenreListAsync(GetGenreListInputDto input)
         {
             // TODO: Ensure mapping works or mapping configured in AutoMapper profile
             var query = await _repository.GetQueryableAsync();
@@ -40,13 +40,13 @@ namespace LTC.MovieService.Genres
             return new PagedResultDto<GenreOutputDto>(totalCount, items);
         }
 
-        public async Task<GenreDetailOutputDto> GetAsync(Guid id)
+        public async Task<GenreDetailOutputDto> GetGenreAsync(Guid id)
         {
             var entity = await _repository.GetAsync(id);
             return new GenreDetailOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<GenreOutputDto> CreateAsync(CreateGenreInputDto input)
+        public async Task<GenreOutputDto> CreateGenreAsync(CreateGenreInputDto input)
         {
             // Dummy creation for boilerplate. Update with proper mapping.
             var entity = new Genre() { Name = input.Name };
@@ -54,7 +54,7 @@ namespace LTC.MovieService.Genres
             return new GenreOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task<GenreOutputDto> UpdateAsync(Guid id, UpdateGenreInputDto input)
+        public async Task<GenreOutputDto> UpdateGenreAsync(Guid id, UpdateGenreInputDto input)
         {
             var entity = await _repository.GetAsync(id);
             entity.Name = input.Name;
@@ -62,7 +62,7 @@ namespace LTC.MovieService.Genres
             return new GenreOutputDto { Id = entity.Id, Name = entity.Name };
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteGenreAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
         }
