@@ -11,6 +11,8 @@ namespace LTC.MovieService.Grpc;
 public class MovieGrpcService : MovieGrpc.MovieGrpcBase
 {
     private readonly IRepository<Movie, Guid> _movieRepository;
+    private readonly IRepository<MovieDistribution, Guid> _distributionRepository;
+    private readonly IRepository<Rating, Guid> _ratingRepository;
     private readonly IRepository<Genre, Guid> _genreRepository;
     private readonly IRepository<Format, Guid> _formatRepository;
     private readonly IRepository<Actor, Guid> _actorRepository;
@@ -18,12 +20,16 @@ public class MovieGrpcService : MovieGrpc.MovieGrpcBase
 
     public MovieGrpcService(
         IRepository<Movie, Guid> movieRepository,
+        IRepository<MovieDistribution, Guid> distributionRepository,
+        IRepository<Rating, Guid> ratingRepository,
         IRepository<Genre, Guid> genreRepository,
         IRepository<Format, Guid> formatRepository,
         IRepository<Actor, Guid> actorRepository,
         IRepository<Studio, Guid> studioRepository)
     {
         _movieRepository = movieRepository;
+        _distributionRepository = distributionRepository;
+        _ratingRepository = ratingRepository;
         _genreRepository = genreRepository;
         _formatRepository = formatRepository;
         _actorRepository = actorRepository;
@@ -67,6 +73,67 @@ public class MovieGrpcService : MovieGrpc.MovieGrpcBase
 
         var movie = await _movieRepository.GetAsync(id);
         return MapToMessage(movie);
+    }
+
+    public override async Task<MoviesByDistributionIdsResponse> GetMoviesByDistributionIds(GetMoviesByDistributionIdsRequest request, ServerCallContext context)
+    {
+        var distributionIds = request.DistributionIds
+            .Select(x => Guid.TryParse(x, out var id) ? id : (Guid?)null)
+            .Where(x => x.HasValue)
+            .Select(x => x!.Value)
+            .Distinct()
+            .ToList();
+
+        var response = new MoviesByDistributionIdsResponse();
+        if (distributionIds.Count == 0)
+        {
+            return response;
+        }
+
+        var distributions = await _distributionRepository.GetListAsync(x => distributionIds.Contains(x.Id));
+        var movieIds = distributions.Select(x => x.MovieId).Distinct().ToList();
+        var movies = movieIds.Count > 0
+            ? await _movieRepository.GetListAsync(x => movieIds.Contains(x.Id))
+            : new List<Movie>();
+
+        var ratingIds = movies
+            .Where(x => x.RatingId.HasValue)
+            .Select(x => x.RatingId!.Value)
+            .Distinct()
+            .ToList();
+        var ratings = ratingIds.Count > 0
+            ? await _ratingRepository.GetListAsync(x => ratingIds.Contains(x.Id))
+            : new List<Rating>();
+
+        var movieById = movies.ToDictionary(x => x.Id, x => x);
+        var ratingCodeById = ratings.ToDictionary(x => x.Id, x => x.Code ?? string.Empty);
+
+        foreach (var distribution in distributions)
+        {
+            if (!movieById.TryGetValue(distribution.MovieId, out var movie))
+            {
+                continue;
+            }
+
+            var ratingCode = string.Empty;
+            if (movie.RatingId.HasValue)
+            {
+                ratingCodeById.TryGetValue(movie.RatingId.Value, out ratingCode);
+            }
+
+            response.Items.Add(new DistributionMovieMessage
+            {
+                DistributionId = distribution.Id.ToString(),
+                MovieId = movie.Id.ToString(),
+                Title = movie.Title ?? string.Empty,
+                OriginalTitle = movie.OriginalTitle ?? string.Empty,
+                PosterUrl = movie.PosterUrl ?? string.Empty,
+                DurationMins = movie.DurationMins ?? 0,
+                RatingCode = ratingCode ?? string.Empty
+            });
+        }
+
+        return response;
     }
 
     public override async Task<GenresResponse> GetAllGenres(Empty request, ServerCallContext context)

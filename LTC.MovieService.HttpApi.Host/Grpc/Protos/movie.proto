@@ -7,6 +7,7 @@ package movie;
 service MovieGrpc {
   rpc GetPaginatedMovies (GetPaginatedMoviesRequest) returns (GetPaginatedMoviesResponse);
   rpc GetMovieById (GetMovieByIdRequest) returns (MovieMessage);
+  rpc GetMoviesByDistributionIds (GetMoviesByDistributionIdsRequest) returns (MoviesByDistributionIdsResponse);
   rpc GetAllGenres (Empty) returns (GenresResponse);
   rpc GetAllFormats (Empty) returns (FormatsResponse);
   rpc GetAllActors (Empty) returns (ActorsResponse);
@@ -46,6 +47,24 @@ message MovieMessage {
 message GetPaginatedMoviesResponse {
   int64 totalCount = 1;
   repeated MovieMessage items = 2;
+}
+
+message GetMoviesByDistributionIdsRequest {
+  repeated string distributionIds = 1;
+}
+
+message DistributionMovieMessage {
+  string distributionId = 1;
+  string movieId = 2;
+  string title = 3;
+  string originalTitle = 4;
+  string posterUrl = 5;
+  int32 durationMins = 6;
+  string ratingCode = 7;
+}
+
+message MoviesByDistributionIdsResponse {
+  repeated DistributionMovieMessage items = 1;
 }
 
 message GenreMessage {

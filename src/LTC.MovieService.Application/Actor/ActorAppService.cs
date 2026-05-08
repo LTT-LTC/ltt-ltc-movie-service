@@ -8,6 +8,7 @@ using LTC.MovieService.Entities;
 using LTC.MovieService.Actors;
 using LTC.MovieService.Actors.Dtos.Input;
 using LTC.MovieService.Actors.Dtos.Output;
+using Volo.Abp;
 
 namespace LTC.MovieService.Actors
 {
@@ -47,8 +48,15 @@ namespace LTC.MovieService.Actors
 
         public async Task<ActorOutputDto> CreateActorAsync(CreateActorInputDto input)
         {
-            // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new Actor() { Name = input.Name };
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Actor name is required.");
+            }
+
+            await EnsureActorNameUniqueAsync(normalizedName);
+
+            var entity = new Actor() { Name = input.Name.Trim() };
             await _repository.InsertAsync(entity);
             return new ActorOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -56,7 +64,15 @@ namespace LTC.MovieService.Actors
         public async Task<ActorOutputDto> UpdateActorAsync(Guid id, UpdateActorInputDto input)
         {
             var entity = await _repository.GetAsync(id);
-            entity.Name = input.Name;
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Actor name is required.");
+            }
+
+            await EnsureActorNameUniqueAsync(normalizedName, id);
+
+            entity.Name = input.Name.Trim();
             await _repository.UpdateAsync(entity);
             return new ActorOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -64,6 +80,27 @@ namespace LTC.MovieService.Actors
         public async Task DeleteActorAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        private async Task EnsureActorNameUniqueAsync(string normalizedName, Guid? excludeId = null)
+        {
+            var query = await _repository.GetQueryableAsync();
+            var entities = await AsyncExecuter.ToListAsync(query);
+            var hasDuplicate = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Name) == normalizedName);
+
+            if (hasDuplicate)
+            {
+                throw new UserFriendlyException("Actor name already exists.");
+            }
+        }
+
+        private static string NormalizeComparableText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }

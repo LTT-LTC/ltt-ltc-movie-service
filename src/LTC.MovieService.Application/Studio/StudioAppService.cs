@@ -8,6 +8,7 @@ using LTC.MovieService.Entities;
 using LTC.MovieService.Studios;
 using LTC.MovieService.Studios.Dtos.Input;
 using LTC.MovieService.Studios.Dtos.Output;
+using Volo.Abp;
 
 namespace LTC.MovieService.Studios
 {
@@ -47,8 +48,15 @@ namespace LTC.MovieService.Studios
 
         public async Task<StudioOutputDto> CreateStudioAsync(CreateStudioInputDto input)
         {
-            // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new Studio() { Name = input.Name };
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Studio name is required.");
+            }
+
+            await EnsureStudioNameUniqueAsync(normalizedName);
+
+            var entity = new Studio() { Name = input.Name.Trim() };
             await _repository.InsertAsync(entity);
             return new StudioOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -56,7 +64,15 @@ namespace LTC.MovieService.Studios
         public async Task<StudioOutputDto> UpdateStudioAsync(Guid id, UpdateStudioInputDto input)
         {
             var entity = await _repository.GetAsync(id);
-            entity.Name = input.Name;
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Studio name is required.");
+            }
+
+            await EnsureStudioNameUniqueAsync(normalizedName, id);
+
+            entity.Name = input.Name.Trim();
             await _repository.UpdateAsync(entity);
             return new StudioOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -64,6 +80,27 @@ namespace LTC.MovieService.Studios
         public async Task DeleteStudioAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        private async Task EnsureStudioNameUniqueAsync(string normalizedName, Guid? excludeId = null)
+        {
+            var query = await _repository.GetQueryableAsync();
+            var entities = await AsyncExecuter.ToListAsync(query);
+            var hasDuplicate = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Name) == normalizedName);
+
+            if (hasDuplicate)
+            {
+                throw new UserFriendlyException("Studio name already exists.");
+            }
+        }
+
+        private static string NormalizeComparableText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }

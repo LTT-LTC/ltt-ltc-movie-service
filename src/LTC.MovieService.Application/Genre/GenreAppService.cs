@@ -9,6 +9,7 @@ using LTC.MovieService.Genres;
 using LTC.MovieService.Genres.Dtos.Input;
 using LTC.MovieService.Genres.Dtos.Output;
 using GenreEntity = LTC.MovieService.Entities.Genre;
+using Volo.Abp;
 
 namespace LTC.MovieService.Genres
 {
@@ -48,8 +49,15 @@ namespace LTC.MovieService.Genres
 
         public async Task<GenreOutputDto> CreateGenreAsync(CreateGenreInputDto input)
         {
-            // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new Genre() { Name = input.Name };
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Genre name is required.");
+            }
+
+            await EnsureGenreNameUniqueAsync(normalizedName);
+
+            var entity = new Genre() { Name = input.Name.Trim() };
             await _repository.InsertAsync(entity);
             return new GenreOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -57,7 +65,15 @@ namespace LTC.MovieService.Genres
         public async Task<GenreOutputDto> UpdateGenreAsync(Guid id, UpdateGenreInputDto input)
         {
             var entity = await _repository.GetAsync(id);
-            entity.Name = input.Name;
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Genre name is required.");
+            }
+
+            await EnsureGenreNameUniqueAsync(normalizedName, id);
+
+            entity.Name = input.Name.Trim();
             await _repository.UpdateAsync(entity);
             return new GenreOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -65,6 +81,27 @@ namespace LTC.MovieService.Genres
         public async Task DeleteGenreAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        private async Task EnsureGenreNameUniqueAsync(string normalizedName, Guid? excludeId = null)
+        {
+            var query = await _repository.GetQueryableAsync();
+            var entities = await AsyncExecuter.ToListAsync(query);
+            var hasDuplicate = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Name) == normalizedName);
+
+            if (hasDuplicate)
+            {
+                throw new UserFriendlyException("Genre name already exists.");
+            }
+        }
+
+        private static string NormalizeComparableText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }

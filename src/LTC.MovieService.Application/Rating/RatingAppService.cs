@@ -6,6 +6,7 @@ using LTC.MovieService.Entities;
 using LTC.MovieService.Ratings;
 using LTC.MovieService.Ratings.Dtos.Input;
 using LTC.MovieService.Ratings.Dtos.Output;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
@@ -52,7 +53,16 @@ namespace LTC.MovieService.Ratings
 
         public async Task<RatingOutputDto> CreateRatingAsync(CreateRatingInputDto input)
         {
-            var e = new Rating { Code = input.Code, Name = input.Name, Description = input.Description };
+            var normalizedCode = NormalizeComparableText(input.Code);
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedCode) || string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Rating code and name are required.");
+            }
+
+            await EnsureRatingUniqueAsync(normalizedCode, normalizedName);
+
+            var e = new Rating { Code = input.Code.Trim(), Name = input.Name.Trim(), Description = input.Description };
             await _repository.InsertAsync(e);
             return new RatingOutputDto { Id = e.Id, Code = e.Code, Name = e.Name, Description = e.Description };
         }
@@ -60,8 +70,17 @@ namespace LTC.MovieService.Ratings
         public async Task<RatingOutputDto> UpdateRatingAsync(Guid id, UpdateRatingInputDto input)
         {
             var e = await _repository.GetAsync(id);
-            e.Code = input.Code;
-            e.Name = input.Name;
+            var normalizedCode = NormalizeComparableText(input.Code);
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedCode) || string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Rating code and name are required.");
+            }
+
+            await EnsureRatingUniqueAsync(normalizedCode, normalizedName, id);
+
+            e.Code = input.Code.Trim();
+            e.Name = input.Name.Trim();
             e.Description = input.Description;
             await _repository.UpdateAsync(e);
             return new RatingOutputDto { Id = e.Id, Code = e.Code, Name = e.Name, Description = e.Description };
@@ -70,6 +89,34 @@ namespace LTC.MovieService.Ratings
         public async Task DeleteRatingAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        private async Task EnsureRatingUniqueAsync(string normalizedCode, string normalizedName, Guid? excludeId = null)
+        {
+            var query = await _repository.GetQueryableAsync();
+            var entities = await AsyncExecuter.ToListAsync(query);
+            var duplicateCode = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Code) == normalizedCode);
+            if (duplicateCode)
+            {
+                throw new UserFriendlyException("Rating code already exists.");
+            }
+
+            var duplicateName = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Name) == normalizedName);
+            if (duplicateName)
+            {
+                throw new UserFriendlyException("Rating name already exists.");
+            }
+        }
+
+        private static string NormalizeComparableText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }
