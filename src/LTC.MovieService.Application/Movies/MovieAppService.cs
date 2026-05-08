@@ -62,6 +62,38 @@ namespace LTC.MovieService.Movies
         public async Task<PagedResultDto<MovieOutputDto>> GetMovieListAsync(GetMovieListInputDto input)
         {
             var query = await _repository.GetQueryableAsync();
+            var statusKeyword = ResolveStatusKeyword(input.Status) ?? ResolveStatusKeyword(input.Keyword);
+
+            if (input.StudioId.HasValue && input.StudioId.Value != Guid.Empty)
+            {
+                query = query.Where(x => x.StudioId == input.StudioId.Value);
+            }
+
+            if (input.GenreId.HasValue && input.GenreId.Value != Guid.Empty)
+            {
+                var movieGenreQuery = await _movieGenreRepository.GetQueryableAsync();
+                var filteredMovieIds = movieGenreQuery
+                    .Where(x => x.GenreId == input.GenreId.Value)
+                    .Select(x => x.MovieId);
+                query = query.Where(x => filteredMovieIds.Contains(x.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(statusKeyword))
+            {
+                var normalizedStatusKeyword = statusKeyword.ToLowerInvariant();
+                query = query.Where(x => x.Status != null && x.Status.ToLower().Replace("-", "_").Replace(" ", "_") == normalizedStatusKeyword);
+            }
+
+            if (!string.IsNullOrWhiteSpace(input.Keyword) && string.IsNullOrWhiteSpace(statusKeyword))
+            {
+                var keyword = input.Keyword.Trim().ToLowerInvariant();
+                query = query.Where(x =>
+                    (x.Title != null && x.Title.ToLower().Contains(keyword)) ||
+                    (x.OriginalTitle != null && x.OriginalTitle.ToLower().Contains(keyword)) ||
+                    (x.Description != null && x.Description.ToLower().Contains(keyword))
+                );
+            }
+
             var maxCount = input.Fetch > 0 ? input.Fetch : 10;
             var skipCount = (input.Page > 1 ? input.Page - 1 : 0) * maxCount;
             
@@ -72,6 +104,23 @@ namespace LTC.MovieService.Movies
 
             var items = await BuildMovieOutputsAsync(entities);
             return new PagedResultDto<MovieOutputDto>(totalCount, items);
+        }
+
+        private static string? ResolveStatusKeyword(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Replace("-", "_").Replace(" ", "_");
+            return normalized switch
+            {
+                "now_showing" => "now_showing",
+                "coming_soon" => "coming_soon",
+                "ended" => "ended",
+                _ => null,
+            };
         }
 
         public async Task<MovieDetailOutputDto> GetMovieAsync(Guid id)
