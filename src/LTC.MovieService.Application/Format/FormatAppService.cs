@@ -8,6 +8,7 @@ using LTC.MovieService.Entities;
 using LTC.MovieService.Formats;
 using LTC.MovieService.Formats.Dtos.Input;
 using LTC.MovieService.Formats.Dtos.Output;
+using Volo.Abp;
 
 namespace LTC.MovieService.Formats
 {
@@ -47,8 +48,15 @@ namespace LTC.MovieService.Formats
 
         public async Task<FormatOutputDto> CreateFormatAsync(CreateFormatInputDto input)
         {
-            // Dummy creation for boilerplate. Update with proper mapping.
-            var entity = new Format() { Name = input.Name };
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Format name is required.");
+            }
+
+            await EnsureFormatNameUniqueAsync(normalizedName);
+
+            var entity = new Format() { Name = input.Name.Trim() };
             await _repository.InsertAsync(entity);
             return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -56,7 +64,15 @@ namespace LTC.MovieService.Formats
         public async Task<FormatOutputDto> UpdateFormatAsync(Guid id, UpdateFormatInputDto input)
         {
             var entity = await _repository.GetAsync(id);
-            entity.Name = input.Name;
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Format name is required.");
+            }
+
+            await EnsureFormatNameUniqueAsync(normalizedName, id);
+
+            entity.Name = input.Name.Trim();
             await _repository.UpdateAsync(entity);
             return new FormatOutputDto { Id = entity.Id, Name = entity.Name };
         }
@@ -64,6 +80,27 @@ namespace LTC.MovieService.Formats
         public async Task DeleteFormatAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        private async Task EnsureFormatNameUniqueAsync(string normalizedName, Guid? excludeId = null)
+        {
+            var query = await _repository.GetQueryableAsync();
+            var entities = await AsyncExecuter.ToListAsync(query);
+            var hasDuplicate = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Name) == normalizedName);
+
+            if (hasDuplicate)
+            {
+                throw new UserFriendlyException("Format name already exists.");
+            }
+        }
+
+        private static string NormalizeComparableText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }

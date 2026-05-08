@@ -8,6 +8,7 @@ using LTC.MovieService.Roles.Dtos.Input;
 using LTC.MovieService.Roles.Dtos.Output;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp;
 
 namespace LTC.MovieService.Roles
 {
@@ -50,7 +51,15 @@ namespace LTC.MovieService.Roles
 
         public async Task<RoleOutputDto> CreateRoleAsync(CreateRoleInputDto input)
         {
-            var e = new MovieRole { Name = input.Name };
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Role name is required.");
+            }
+
+            await EnsureRoleNameUniqueAsync(normalizedName);
+
+            var e = new MovieRole { Name = input.Name.Trim() };
             await _repository.InsertAsync(e);
             return new RoleOutputDto { Id = e.Id, Name = e.Name };
         }
@@ -58,7 +67,15 @@ namespace LTC.MovieService.Roles
         public async Task<RoleOutputDto> UpdateRoleAsync(Guid id, UpdateRoleInputDto input)
         {
             var e = await _repository.GetAsync(id);
-            e.Name = input.Name;
+            var normalizedName = NormalizeComparableText(input.Name);
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new UserFriendlyException("Role name is required.");
+            }
+
+            await EnsureRoleNameUniqueAsync(normalizedName, id);
+
+            e.Name = input.Name.Trim();
             await _repository.UpdateAsync(e);
             return new RoleOutputDto { Id = e.Id, Name = e.Name };
         }
@@ -66,6 +83,27 @@ namespace LTC.MovieService.Roles
         public async Task DeleteRoleAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        private async Task EnsureRoleNameUniqueAsync(string normalizedName, Guid? excludeId = null)
+        {
+            var query = await _repository.GetQueryableAsync();
+            var entities = await AsyncExecuter.ToListAsync(query);
+            var hasDuplicate = entities.Any(item =>
+                (!excludeId.HasValue || item.Id != excludeId.Value) &&
+                NormalizeComparableText(item.Name) == normalizedName);
+
+            if (hasDuplicate)
+            {
+                throw new UserFriendlyException("Role name already exists.");
+            }
+        }
+
+        private static string NormalizeComparableText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }
