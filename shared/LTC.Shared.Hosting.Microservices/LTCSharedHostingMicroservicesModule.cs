@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using LTC.Shared.Hosting.Microservices.Messaging;
 using StackExchange.Redis;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
@@ -62,7 +64,25 @@ namespace LTC.Shared.Hosting.Microservices
 
             ConfigureHangfire(context, configuration, environment, connectionMultiplexer);
 
+            ConfigureRabbitMq(context, configuration);
+
             ConfigureSharedTenantResolution();
+        }
+
+        private static void ConfigureRabbitMq(ServiceConfigurationContext context, IConfiguration configuration)
+        {
+            context.Services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+
+            var section = configuration.GetSection(RabbitMqOptions.SectionName);
+            var enabled = section.GetValue<bool?>("Enabled") ?? true;
+            var hostName = section["HostName"] ?? string.Empty;
+            if (!enabled || string.IsNullOrWhiteSpace(hostName))
+            {
+                context.Services.AddSingleton<IMessagePublisher, NullMessagePublisher>();
+                return;
+            }
+
+            context.Services.AddSingleton<IMessagePublisher, RabbitMqMessagePublisher>();
         }
 
         /// <summary>
